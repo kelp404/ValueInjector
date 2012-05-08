@@ -3,4 +3,30 @@ Kelp http://kelp.phate.org/
 MIT License
 
 /withoutAutomaticReferenceCounting : 
-		without Object-C Automatic Reference Counting version
+	without Object-C Automatic Reference Counting version
+
+
+After import ValueInjector.h, NSObject will be add a new message "injectFromObject", and NSDictionary will be add a new message "initWithObject".
+
+
+Inject value from NSDictionary to custom class
+
+NSObject (ValueInjector)
+- (id)injectFromObject:(NSObject *)object;
+
+example:
+NSDictionary *dictionary = [[[NSDictionary alloc] init] ...];
+YourClass *model = [[YourClass alloc] init];
+[model inijectFromObject:dictionary];
+
+------------------------------------------------------------------------
+
+Init NSDictionary with custom class
+
+NSDictionary (ValueInjector)
+- (id)initWithObject:(NSObject *)object;
+
+example:
+YourClass *model = [[YourClass alloc] init];
+// set value of model ...
+NSDictionary *dictionary = [[NSDictionary alloc] initWithObject:model];
