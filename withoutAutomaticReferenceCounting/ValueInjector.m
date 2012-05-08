@@ -10,7 +10,7 @@
 #import "ValueInjector.h"
 
 @implementation NSObject (ValueInjector)
-// Inject from NSDictionary to custom class
+// Inject value from NSDictionary to custom class
 - (id)injectFromObject:(NSObject *)object
 {
     // get the name of custom class

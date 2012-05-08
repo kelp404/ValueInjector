@@ -6,7 +6,7 @@
 //  MIT License
 //
 //  1.0
-//      Inject from NSDictionary to custom class
+//      Inject value from NSDictionary to custom class
 //      NSObject (ValueInjector)
 //      - (id)injectFromObject:(NSObject *)object;
 //
