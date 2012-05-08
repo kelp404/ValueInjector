@@ -2,4 +2,5 @@ ValueInjector 1.0
 Kelp http://kelp.phate.org/
 MIT License
 
-/withoutAutomaticReferenceCounting
+/withoutAutomaticReferenceCounting : 
+		without Object-C Automatic Reference Counting version
