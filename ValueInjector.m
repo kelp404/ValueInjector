@@ -3,7 +3,7 @@
 //  ValueInjector   1.0.1
 //
 //  Created by Kelp on 12/5/6.
-//  Copyright (c) 2012年 Kelp http://kelp.phate.org/
+//  Copyright (c) 2012 Kelp http://kelp.phate.org/
 //  MIT License
 //
 
