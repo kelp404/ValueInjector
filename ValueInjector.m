@@ -66,16 +66,28 @@
                     clName = [NSString stringWithFormat:@"%@%@", clName, name];
                 }
                 Class cl = NSClassFromString(clName);
+#if __has_feature(objc_arc)
+                id testModel = [[cl alloc] init];
+#else
                 id testModel = [[[cl alloc] init] autorelease];
+#endif
                 // test model init success
                 if (testModel == NULL) {
                     [self setValue:value forKey:name];
                 }
                 else {
+#if __has_feature(objc_arc)
+                    NSMutableArray *result = [[NSMutableArray alloc] init];
+#else
                     NSMutableArray *result = [[[NSMutableArray alloc] init] autorelease];
+#endif
                     // list all item in NSArray
                     for (id item in value) {
+#if __has_feature(objc_arc)
+                        id model = [[cl alloc] init];
+#else
                         id model = [[[cl alloc] init] autorelease];
+#endif
                         [model injectFromObject:item];
                         // put model into result array
                         if (model == NULL) {
@@ -92,7 +104,11 @@
             // custom class
             else {
                 Class cl = NSClassFromString(className);
+#if __has_feature(objc_arc)
+                id model = [[cl alloc] init];
+#else
                 id model = [[[cl alloc] init] autorelease];
+#endif
                 [model injectFromObject:value];
                 [self setValue:model forKey:name];
             }
@@ -128,7 +144,11 @@
     for (unsigned int index = 0; index < propertyCount; index++) {
         objc_property_t property = properties[index];
         
+#if __has_feature(objc_arc)
+        NSString *name = [NSString stringWithUTF8String:property_getName(property)];
+#else
         NSString *name = [[NSString stringWithUTF8String:property_getName(property)] autorelease];
+#endif
         NSString *attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
         id value = [object valueForKey:name];
         [key addObject:name];     
@@ -151,7 +171,11 @@
                         [content addObject:[NSDictionary dictionaryWithDictionary:value]];
                     }
                     @catch (NSException *exception) {
+#if __has_feature(objc_arc)
+                        [content addObject:[[NSDictionary alloc] init]];
+#else
                         [content addObject:[[[NSDictionary alloc] init] autorelease]];
+#endif
                     }
                 }
                 else if ([className isEqualToString:@"NSArray"]) {
@@ -169,9 +193,17 @@
                             }
                             else {
                                 // there are class type in array
+#if __has_feature(objc_arc)
+                                NSMutableArray *output = [[NSMutableArray alloc] init];
+#else
                                 NSMutableArray *output = [[[NSMutableArray alloc] init] autorelease];
+#endif
                                 for (id item in source) {
+#if __has_feature(objc_arc)
+                                    NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
+#else
                                     NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
+#endif
                                     [output addObject:dic];
                                 }
                                 [content addObject:[NSArray arrayWithArray:output]];
@@ -179,12 +211,20 @@
                         }
                     }
                     @catch (NSException *exception) {
+#if __has_feature(objc_arc)
+                        [content addObject:[[NSArray alloc] init]];
+#else
                         [content addObject:[[[NSArray alloc] init] autorelease]];
+#endif
                     }
                 }
                 else {
                     // custom class
+#if __has_feature(objc_arc)
+                    NSDictionary *dic = [[NSDictionary alloc] initWithObject:value];
+#else
                     NSDictionary *dic = [[[NSDictionary alloc] initWithObject:value] autorelease];
+#endif
                     [content addObject:dic];
                 }
             }
@@ -197,8 +237,12 @@
     self = [self initWithObjects:content forKeys:key];
     
     free(properties);
+#if __has_feature(objc_arc)
+    
+#else
     [content release];
     [key release];
+#endif
     
     return self;
 }
