@@ -5,7 +5,7 @@
 //  Copyright (c) 2012年 Kelp http://kelp.phate.org/
 //  MIT License
 //
-//  1.0.1
+//  1.0.1   2012/5/9
 //      add ARC version
 //
 //  1.0
