@@ -5,7 +5,7 @@ Kelp http://kelp.phate.org/
 MIT License
 
 
-Cocoa ValueInjector provides converting week typing to strong typing.
+Cocoa ValueInjector provides converting weak typing to strong typing.
 
 ValueInjector includes two function injecting value from NSDictionary to custom class and initing NSDictionary with custom class.
 
