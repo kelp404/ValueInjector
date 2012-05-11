@@ -1,7 +1,7 @@
 ##ValueInjector 1.0.1
 http://kelp.phate.org/2012/05/inject-value-from-nsdictionary-to.html
 
-Kelp http://kelp.phate.org/
+Kelp http://kelp.phate.org/ <br/>
 MIT License
 
 
@@ -11,10 +11,9 @@ It includes two function injecting value from NSDictionary to custom class and i
 
 After import ValueInjector.h, NSObject will be add a new message "injectFromObject", and NSDictionary will be add a new message "initWithObject".
 
-injectFromObject converts weak typing to strong typing. When you use JSONKit parsing json then get a NSDictionary object, you can use injectFromObject to convert NSDictionary to custom class.
+**injectFromObject** converts weak typing to strong typing. When you use JSONKit parsing json then get a NSDictionary object, you can use injectFromObject to convert NSDictionary to custom class.
 
-initWithObject converts custom class to NSDictionary. When you want to serialize custom class(strong typing), you can use initWithObject to initialize NSDictionary with custom class.
-
+**initWithObject** converts custom class to NSDictionary. When you want to serialize custom class(strong typing), you can use initWithObject to initialize NSDictionary with custom class.
 
 
 ###Inject value from NSDictionary to custom class
