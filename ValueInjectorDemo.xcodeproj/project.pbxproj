@@ -1,0 +1,483 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		21B8D5E7157B68A00012F4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5E6157B68A00012F4B4 /* UIKit.framework */; };
+		21B8D5E9157B68A00012F4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5E8157B68A00012F4B4 /* Foundation.framework */; };
+		21B8D5EB157B68A00012F4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5EA157B68A00012F4B4 /* CoreGraphics.framework */; };
+		21B8D5F1157B68A00012F4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 21B8D5EF157B68A00012F4B4 /* InfoPlist.strings */; };
+		21B8D5F3157B68A00012F4B4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D5F2157B68A00012F4B4 /* main.m */; };
+		21B8D5F7157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D5F6157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.m */; };
+		21B8D5FA157B68A00012F4B4 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 21B8D5F8157B68A00012F4B4 /* MainStoryboard.storyboard */; };
+		21B8D5FD157B68A00012F4B4 /* ValueInjectorDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D5FC157B68A00012F4B4 /* ValueInjectorDemoViewController.m */; };
+		21B8D605157B68A00012F4B4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D604157B68A00012F4B4 /* SenTestingKit.framework */; };
+		21B8D606157B68A00012F4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5E6157B68A00012F4B4 /* UIKit.framework */; };
+		21B8D607157B68A00012F4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5E8157B68A00012F4B4 /* Foundation.framework */; };
+		21B8D60F157B68A00012F4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 21B8D60D157B68A00012F4B4 /* InfoPlist.strings */; };
+		21B8D612157B68A00012F4B4 /* ValueInjectorDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D611157B68A00012F4B4 /* ValueInjectorDemoTests.m */; };
+		21B8D621157B68E30012F4B4 /* ValueInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D620157B68E30012F4B4 /* ValueInjector.m */; };
+		21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D625157B68FC0012F4B4 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		21B8D608157B68A00012F4B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21B8D5D9157B68A00012F4B4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 21B8D5E1157B68A00012F4B4;
+			remoteInfo = ValueInjectorDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		21B8D5E2157B68A00012F4B4 /* ValueInjectorDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ValueInjectorDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		21B8D5E6157B68A00012F4B4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		21B8D5E8157B68A00012F4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		21B8D5EA157B68A00012F4B4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		21B8D5EE157B68A00012F4B4 /* ValueInjectorDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ValueInjectorDemo-Info.plist"; sourceTree = "<group>"; };
+		21B8D5F0157B68A00012F4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		21B8D5F2157B68A00012F4B4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		21B8D5F4157B68A00012F4B4 /* ValueInjectorDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ValueInjectorDemo-Prefix.pch"; sourceTree = "<group>"; };
+		21B8D5F5157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueInjectorDemoAppDelegate.h; sourceTree = "<group>"; };
+		21B8D5F6157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ValueInjectorDemoAppDelegate.m; sourceTree = "<group>"; };
+		21B8D5F9157B68A00012F4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		21B8D5FB157B68A00012F4B4 /* ValueInjectorDemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueInjectorDemoViewController.h; sourceTree = "<group>"; };
+		21B8D5FC157B68A00012F4B4 /* ValueInjectorDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ValueInjectorDemoViewController.m; sourceTree = "<group>"; };
+		21B8D603157B68A00012F4B4 /* ValueInjectorDemoTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ValueInjectorDemoTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		21B8D604157B68A00012F4B4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		21B8D60C157B68A00012F4B4 /* ValueInjectorDemoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ValueInjectorDemoTests-Info.plist"; sourceTree = "<group>"; };
+		21B8D60E157B68A00012F4B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		21B8D610157B68A00012F4B4 /* ValueInjectorDemoTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueInjectorDemoTests.h; sourceTree = "<group>"; };
+		21B8D611157B68A00012F4B4 /* ValueInjectorDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ValueInjectorDemoTests.m; sourceTree = "<group>"; };
+		21B8D61F157B68E30012F4B4 /* ValueInjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueInjector.h; sourceTree = "<group>"; };
+		21B8D620157B68E30012F4B4 /* ValueInjector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValueInjector.m; sourceTree = "<group>"; };
+		21B8D624157B68FC0012F4B4 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		21B8D625157B68FC0012F4B4 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		21B8D627157B68FC0012F4B4 /* GoogleGeoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleGeoModel.h; sourceTree = "<group>"; };
+		21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleGeoModel.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		21B8D5DF157B68A00012F4B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21B8D5E7157B68A00012F4B4 /* UIKit.framework in Frameworks */,
+				21B8D5E9157B68A00012F4B4 /* Foundation.framework in Frameworks */,
+				21B8D5EB157B68A00012F4B4 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		21B8D5FF157B68A00012F4B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21B8D605157B68A00012F4B4 /* SenTestingKit.framework in Frameworks */,
+				21B8D606157B68A00012F4B4 /* UIKit.framework in Frameworks */,
+				21B8D607157B68A00012F4B4 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		21B8D5D7157B68A00012F4B4 = {
+			isa = PBXGroup;
+			children = (
+				21B8D61F157B68E30012F4B4 /* ValueInjector.h */,
+				21B8D620157B68E30012F4B4 /* ValueInjector.m */,
+				21B8D623157B68FC0012F4B4 /* JSONKit */,
+				21B8D626157B68FC0012F4B4 /* Models */,
+				21B8D5EC157B68A00012F4B4 /* ValueInjectorDemo */,
+				21B8D60A157B68A00012F4B4 /* ValueInjectorDemoTests */,
+				21B8D5E5157B68A00012F4B4 /* Frameworks */,
+				21B8D5E3157B68A00012F4B4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		21B8D5E3157B68A00012F4B4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D5E2157B68A00012F4B4 /* ValueInjectorDemo.app */,
+				21B8D603157B68A00012F4B4 /* ValueInjectorDemoTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		21B8D5E5157B68A00012F4B4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D5E6157B68A00012F4B4 /* UIKit.framework */,
+				21B8D5E8157B68A00012F4B4 /* Foundation.framework */,
+				21B8D5EA157B68A00012F4B4 /* CoreGraphics.framework */,
+				21B8D604157B68A00012F4B4 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		21B8D5EC157B68A00012F4B4 /* ValueInjectorDemo */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D5F5157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.h */,
+				21B8D5F6157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.m */,
+				21B8D5F8157B68A00012F4B4 /* MainStoryboard.storyboard */,
+				21B8D5FB157B68A00012F4B4 /* ValueInjectorDemoViewController.h */,
+				21B8D5FC157B68A00012F4B4 /* ValueInjectorDemoViewController.m */,
+				21B8D5ED157B68A00012F4B4 /* Supporting Files */,
+			);
+			path = ValueInjectorDemo;
+			sourceTree = "<group>";
+		};
+		21B8D5ED157B68A00012F4B4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D5EE157B68A00012F4B4 /* ValueInjectorDemo-Info.plist */,
+				21B8D5EF157B68A00012F4B4 /* InfoPlist.strings */,
+				21B8D5F2157B68A00012F4B4 /* main.m */,
+				21B8D5F4157B68A00012F4B4 /* ValueInjectorDemo-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		21B8D60A157B68A00012F4B4 /* ValueInjectorDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D610157B68A00012F4B4 /* ValueInjectorDemoTests.h */,
+				21B8D611157B68A00012F4B4 /* ValueInjectorDemoTests.m */,
+				21B8D60B157B68A00012F4B4 /* Supporting Files */,
+			);
+			path = ValueInjectorDemoTests;
+			sourceTree = "<group>";
+		};
+		21B8D60B157B68A00012F4B4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D60C157B68A00012F4B4 /* ValueInjectorDemoTests-Info.plist */,
+				21B8D60D157B68A00012F4B4 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		21B8D623157B68FC0012F4B4 /* JSONKit */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D624157B68FC0012F4B4 /* JSONKit.h */,
+				21B8D625157B68FC0012F4B4 /* JSONKit.m */,
+			);
+			name = JSONKit;
+			path = ValueInjectorDemo/JSONKit;
+			sourceTree = "<group>";
+		};
+		21B8D626157B68FC0012F4B4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				21B8D627157B68FC0012F4B4 /* GoogleGeoModel.h */,
+				21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */,
+			);
+			name = Models;
+			path = ValueInjectorDemo/Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		21B8D5E1157B68A00012F4B4 /* ValueInjectorDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 21B8D615157B68A00012F4B4 /* Build configuration list for PBXNativeTarget "ValueInjectorDemo" */;
+			buildPhases = (
+				21B8D5DE157B68A00012F4B4 /* Sources */,
+				21B8D5DF157B68A00012F4B4 /* Frameworks */,
+				21B8D5E0157B68A00012F4B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ValueInjectorDemo;
+			productName = ValueInjectorDemo;
+			productReference = 21B8D5E2157B68A00012F4B4 /* ValueInjectorDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		21B8D602157B68A00012F4B4 /* ValueInjectorDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 21B8D618157B68A00012F4B4 /* Build configuration list for PBXNativeTarget "ValueInjectorDemoTests" */;
+			buildPhases = (
+				21B8D5FE157B68A00012F4B4 /* Sources */,
+				21B8D5FF157B68A00012F4B4 /* Frameworks */,
+				21B8D600157B68A00012F4B4 /* Resources */,
+				21B8D601157B68A00012F4B4 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				21B8D609157B68A00012F4B4 /* PBXTargetDependency */,
+			);
+			name = ValueInjectorDemoTests;
+			productName = ValueInjectorDemoTests;
+			productReference = 21B8D603157B68A00012F4B4 /* ValueInjectorDemoTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		21B8D5D9157B68A00012F4B4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = ValueInjectorDemo;
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 21B8D5DC157B68A00012F4B4 /* Build configuration list for PBXProject "ValueInjectorDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 21B8D5D7157B68A00012F4B4;
+			productRefGroup = 21B8D5E3157B68A00012F4B4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				21B8D5E1157B68A00012F4B4 /* ValueInjectorDemo */,
+				21B8D602157B68A00012F4B4 /* ValueInjectorDemoTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		21B8D5E0157B68A00012F4B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21B8D5F1157B68A00012F4B4 /* InfoPlist.strings in Resources */,
+				21B8D5FA157B68A00012F4B4 /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		21B8D600157B68A00012F4B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21B8D60F157B68A00012F4B4 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		21B8D601157B68A00012F4B4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		21B8D5DE157B68A00012F4B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21B8D5F3157B68A00012F4B4 /* main.m in Sources */,
+				21B8D5F7157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.m in Sources */,
+				21B8D5FD157B68A00012F4B4 /* ValueInjectorDemoViewController.m in Sources */,
+				21B8D621157B68E30012F4B4 /* ValueInjector.m in Sources */,
+				21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */,
+				21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		21B8D5FE157B68A00012F4B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21B8D612157B68A00012F4B4 /* ValueInjectorDemoTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		21B8D609157B68A00012F4B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 21B8D5E1157B68A00012F4B4 /* ValueInjectorDemo */;
+			targetProxy = 21B8D608157B68A00012F4B4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		21B8D5EF157B68A00012F4B4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				21B8D5F0157B68A00012F4B4 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		21B8D5F8157B68A00012F4B4 /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				21B8D5F9157B68A00012F4B4 /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+		21B8D60D157B68A00012F4B4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				21B8D60E157B68A00012F4B4 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		21B8D613157B68A00012F4B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		21B8D614157B68A00012F4B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		21B8D616157B68A00012F4B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ValueInjectorDemo/ValueInjectorDemo-Prefix.pch";
+				INFOPLIST_FILE = "ValueInjectorDemo/ValueInjectorDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		21B8D617157B68A00012F4B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ValueInjectorDemo/ValueInjectorDemo-Prefix.pch";
+				INFOPLIST_FILE = "ValueInjectorDemo/ValueInjectorDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		21B8D619157B68A00012F4B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ValueInjectorDemo.app/ValueInjectorDemo";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ValueInjectorDemo/ValueInjectorDemo-Prefix.pch";
+				INFOPLIST_FILE = "ValueInjectorDemoTests/ValueInjectorDemoTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		21B8D61A157B68A00012F4B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ValueInjectorDemo.app/ValueInjectorDemo";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ValueInjectorDemo/ValueInjectorDemo-Prefix.pch";
+				INFOPLIST_FILE = "ValueInjectorDemoTests/ValueInjectorDemoTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		21B8D5DC157B68A00012F4B4 /* Build configuration list for PBXProject "ValueInjectorDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21B8D613157B68A00012F4B4 /* Debug */,
+				21B8D614157B68A00012F4B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		21B8D615157B68A00012F4B4 /* Build configuration list for PBXNativeTarget "ValueInjectorDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21B8D616157B68A00012F4B4 /* Debug */,
+				21B8D617157B68A00012F4B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		21B8D618157B68A00012F4B4 /* Build configuration list for PBXNativeTarget "ValueInjectorDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21B8D619157B68A00012F4B4 /* Debug */,
+				21B8D61A157B68A00012F4B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 21B8D5D9157B68A00012F4B4 /* Project object */;
+}
