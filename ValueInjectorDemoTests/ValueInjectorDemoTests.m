@@ -30,7 +30,7 @@
     // parsing json with JSONKit() https://github.com/johnezang/JSONKit
     NSDictionary *geo = [json objectFromJSONString];
     // instance strong typing
-    GoogleGeoModel *model = [[GoogleGeoModel alloc] init];
+    GoogleGeoModel *model = [GoogleGeoModel new];
     // convert weak typing to strong typing
     [model injectFromObject:geo];
     

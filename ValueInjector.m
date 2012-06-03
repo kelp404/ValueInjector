@@ -1,6 +1,6 @@
 //
 //  ValueInjector.m
-//  ValueInjector   1.0.1
+//  ValueInjector   1.0.2
 //
 //  Created by Kelp on 12/5/6.
 //  Copyright (c) 2012 Kelp http://kelp.phate.org/
@@ -67,9 +67,9 @@
                 }
                 Class cl = NSClassFromString(clName);
 #if __has_feature(objc_arc)
-                id testModel = [[cl alloc] init];
+                id testModel = [cl new];
 #else
-                id testModel = [[[cl alloc] init] autorelease];
+                id testModel = [[cl new] autorelease];
 #endif
                 // test model init success
                 if (testModel == NULL) {
@@ -77,16 +77,16 @@
                 }
                 else {
 #if __has_feature(objc_arc)
-                    NSMutableArray *result = [[NSMutableArray alloc] init];
+                    NSMutableArray *result = [NSMutableArray new];
 #else
-                    NSMutableArray *result = [[[NSMutableArray alloc] init] autorelease];
+                    NSMutableArray *result = [[NSMutableArray new] autorelease];
 #endif
                     // list all item in NSArray
                     for (id item in value) {
 #if __has_feature(objc_arc)
-                        id model = [[cl alloc] init];
+                        id model = [cl new];
 #else
-                        id model = [[[cl alloc] init] autorelease];
+                        id model = [[cl new] autorelease];
 #endif
                         [model injectFromObject:item];
                         // put model into result array
@@ -105,9 +105,9 @@
             else {
                 Class cl = NSClassFromString(className);
 #if __has_feature(objc_arc)
-                id model = [[cl alloc] init];
+                id model = [cl new];
 #else
-                id model = [[[cl alloc] init] autorelease];
+                id model = [[cl new] autorelease];
 #endif
                 [model injectFromObject:value];
                 [self setValue:model forKey:name];
@@ -128,8 +128,8 @@
 // init NSDictionary with custom class
 - (id)initWithObject:(NSObject *)object
 {
-    NSMutableArray *content = [[NSMutableArray alloc] init];
-    NSMutableArray *key = [[NSMutableArray alloc] init];
+    NSMutableArray *content = [NSMutableArray new];
+    NSMutableArray *key = [NSMutableArray new];
     
     unsigned int propertyCount = 0;
     // get properties of custom class
@@ -172,9 +172,9 @@
                     }
                     @catch (NSException *exception) {
 #if __has_feature(objc_arc)
-                        [content addObject:[[NSDictionary alloc] init]];
+                        [content addObject:[NSDictionary new]];
 #else
-                        [content addObject:[[[NSDictionary alloc] init] autorelease]];
+                        [content addObject:[[NSDictionary new] autorelease]];
 #endif
                     }
                 }
@@ -194,9 +194,9 @@
                             else {
                                 // there are class type in array
 #if __has_feature(objc_arc)
-                                NSMutableArray *output = [[NSMutableArray alloc] init];
+                                NSMutableArray *output = [NSMutableArray new];
 #else
-                                NSMutableArray *output = [[[NSMutableArray alloc] init] autorelease];
+                                NSMutableArray *output = [[NSMutableArray new] autorelease];
 #endif
                                 for (id item in source) {
 #if __has_feature(objc_arc)
@@ -212,9 +212,9 @@
                     }
                     @catch (NSException *exception) {
 #if __has_feature(objc_arc)
-                        [content addObject:[[NSArray alloc] init]];
+                        [content addObject:[NSArray new]];
 #else
-                        [content addObject:[[[NSArray alloc] init] autorelease]];
+                        [content addObject:[[NSArray new] autorelease]];
 #endif
                     }
                 }

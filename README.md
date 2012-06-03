@@ -1,4 +1,4 @@
-##ValueInjector 1.0.1
+##ValueInjector 1.0.2
 http://kelp.phate.org/2012/05/inject-value-from-nsdictionary-to.html
 
 Kelp http://kelp.phate.org/ <br/>

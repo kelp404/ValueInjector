@@ -394,6 +394,7 @@
 		21B8D616157B68A00012F4B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ValueInjectorDemo/ValueInjectorDemo-Prefix.pch";
 				INFOPLIST_FILE = "ValueInjectorDemo/ValueInjectorDemo-Info.plist";
@@ -405,6 +406,7 @@
 		21B8D617157B68A00012F4B4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ValueInjectorDemo/ValueInjectorDemo-Prefix.pch";
 				INFOPLIST_FILE = "ValueInjectorDemo/ValueInjectorDemo-Info.plist";
@@ -417,6 +419,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ValueInjectorDemo.app/ValueInjectorDemo";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
@@ -434,6 +437,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ValueInjectorDemo.app/ValueInjectorDemo";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
