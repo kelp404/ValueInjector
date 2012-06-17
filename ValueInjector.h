@@ -1,15 +1,18 @@
 /*
-  ValueInjector   1.0.2
+  ValueInjector   1.0.3
 
   Created by Kelp on 12/5/6.
   Copyright (c) 2012 Kelp http://kelp.phate.org/
   MIT License
 
+ 1.0.3      2012-06-17
+    fixed bug: could not get property with extended class
+ 
  1.0.2      2012-06-03
     replace "[[class alloc] init]" to "[class new]"
  
  1.0.1     2012-05-09
-      add ARC version
+    add ARC version
 
  1.0
     Inject value from NSDictionary to custom class

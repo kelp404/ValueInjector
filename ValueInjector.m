@@ -1,6 +1,6 @@
 //
 //  ValueInjector.m
-//  ValueInjector   1.0.2
+//  ValueInjector   1.0.3
 //
 //  Created by Kelp on 12/5/6.
 //  Copyright (c) 2012 Kelp http://kelp.phate.org/
@@ -9,6 +9,59 @@
 
 #import "ValueInjector.h"
 
+
+#pragma mark - PropertyModel
+@interface PropertyModel : NSObject
+@property (retain, nonatomic) NSString *name;
+@property (retain, nonatomic) NSString *attributes;
+@end
+@implementation PropertyModel
+@synthesize name, attributes;
+@end
+
+
+#pragma mark - ValueInjectorUtility
+@interface ValueInjectorUtility : NSObject
+- (NSArray *)getPropertyList:(Class)cls;
+@end
+@implementation ValueInjectorUtility
+- (NSArray *)getPropertyList:(Class)cls
+{
+#if __has_feature(objc_arc)
+    NSMutableArray *result = [NSMutableArray new];
+#else
+    NSMutableArray *result = [[NSMutableArray new] autorelease];
+#endif
+    unsigned int count;
+    objc_property_t *properties = class_copyPropertyList([cls class], &count);
+    
+    for (unsigned int index = 0; index < count; index++) {
+#if __has_feature(objc_arc)
+        PropertyModel *model = [PropertyModel new];
+#else
+        PropertyModel *model = [[PropertyModel new] autorelease];
+#endif
+        objc_property_t property = properties[index];
+        
+        model.name = [NSString stringWithUTF8String:property_getName(property)];
+        model.attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+        [result addObject:model];
+    }
+    free(properties);
+    
+    // scan super class
+    Class superCls = class_getSuperclass([cls class]);
+    NSString *superName = [NSString stringWithUTF8String:class_getName(superCls)];
+    if (![superName isEqualToString:@"NSObject"]) {
+        NSArray *superProperties = [self getPropertyList:superCls];
+        [result addObjectsFromArray:superProperties];
+    }
+    return result;
+}
+@end
+
+
+#pragma mark - ValueInjector
 @implementation NSObject (ValueInjector)
 // Inject value from NSDictionary to custom class
 - (id)injectFromObject:(NSObject *)object
@@ -17,42 +70,43 @@
     NSString *targetClassName = [NSString stringWithUTF8String:class_getName([self class])];
     
     // list properties of custom class and inject value
-    unsigned int propertyCount = 0;
-    objc_property_t *properties = class_copyPropertyList([self class], &propertyCount);
+#if __has_feature(objc_arc)
+    ValueInjectorUtility *viu = [ValueInjectorUtility new];
+#else
+    ValueInjectorUtility *viu = [[ValueInjectorUtility new] autorelease];
+#endif
+    NSArray *properties = [viu getPropertyList:[self class]];
     
-    for (unsigned int index = 0; index < propertyCount; index++) {
-        objc_property_t property = properties[index];
+    for (unsigned int index = 0; index < [properties count]; index++) {
+        PropertyModel *property = [properties objectAtIndex:index];
         
-        // get property name of custom class
-        NSString *name = [NSString stringWithUTF8String:property_getName(property)];
-        NSString *attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
-        id value = [object valueForKey:name];
+        id value = [object valueForKey:property.name];
         
         if (value == NULL)
             continue;
         
-        if ([attributes rangeOfString:@"T@\""].length > 0) {
+        if ([property.attributes rangeOfString:@"T@\""].length > 0) {
             // the type of peoperty is class
-            int endIndex = [attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [attributes length] - 4)].location;
+            int endIndex = [property.attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [property.attributes length] - 4)].location;
             // get class type name from attributes of property
-            NSString *className = [attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
+            NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
             
             if ([className isEqualToString:@"NSString"] ||
                 [className isEqualToString:@"NSNumber"]) {
-                [self setValue:value forKey:name];
+                [self setValue:value forKey:property.name];
             }
             // NSDictionary
             else if ([className isEqualToString:@"NSDictionary"]) {
                 // stop inject children propertis and reconstruct NSDictionary
                 if (value == NULL) {
-                    [self setValue:value forKey:name];
+                    [self setValue:value forKey:property.name];
                 }
                 else {
                     @try {
-                        [self setValue:[NSDictionary dictionaryWithDictionary:value] forKey:name];
+                        [self setValue:[NSDictionary dictionaryWithDictionary:value] forKey:property.name];
                     }
                     @catch (NSException *exception) {
-                        [self setValue:value forKey:name];
+                        [self setValue:value forKey:property.name];
                     }   
                 }
             }
@@ -60,10 +114,10 @@
             else if ([className isEqualToString:@"NSArray"]) {
                 NSString *clName = [targetClassName substringFromIndex:[targetClassName length] - 5];
                 if ([clName isEqualToString:@"Model"]) {
-                    clName = [NSString stringWithFormat:@"%@%@", [targetClassName substringToIndex:[targetClassName length] - 5], name];
+                    clName = [NSString stringWithFormat:@"%@%@", [targetClassName substringToIndex:[targetClassName length] - 5], property.name];
                 }
                 else {
-                    clName = [NSString stringWithFormat:@"%@%@", clName, name];
+                    clName = [NSString stringWithFormat:@"%@%@", clName, property.name];
                 }
                 Class cl = NSClassFromString(clName);
 #if __has_feature(objc_arc)
@@ -73,7 +127,7 @@
 #endif
                 // test model init success
                 if (testModel == NULL) {
-                    [self setValue:value forKey:name];
+                    [self setValue:value forKey:property.name];
                 }
                 else {
 #if __has_feature(objc_arc)
@@ -98,7 +152,7 @@
                         }
                     }
                     // inject value to property of custom class
-                    [self setValue:[NSArray arrayWithArray:result] forKey:name];
+                    [self setValue:[NSArray arrayWithArray:result] forKey:property.name];
                 }
             }
             // custom class
@@ -110,15 +164,14 @@
                 id model = [[cl new] autorelease];
 #endif
                 [model injectFromObject:value];
-                [self setValue:model forKey:name];
+                [self setValue:model forKey:property.name];
             }
         }
         else {
             // the type of member is not class
-            [self setValue:value forKey:name];
+            [self setValue:value forKey:property.name];
         }
     }
-    free(properties);
 
     return self;
 }
@@ -131,35 +184,33 @@
     NSMutableArray *content = [NSMutableArray new];
     NSMutableArray *key = [NSMutableArray new];
     
-    unsigned int propertyCount = 0;
     // get properties of custom class
-    objc_property_t *properties = class_copyPropertyList([object class], &propertyCount);
+#if __has_feature(objc_arc)
+    ValueInjectorUtility *viu = [ValueInjectorUtility new];
+#else
+    ValueInjectorUtility *viu = [[ValueInjectorUtility new] autorelease];
+#endif
+    NSArray *properties = [viu getPropertyList:[object class]];
     
     // no property
-    if (propertyCount == 0) {
+    if ([properties count] == 0) {
         return (id)object;
     }
     
-    //member is property
-    for (unsigned int index = 0; index < propertyCount; index++) {
-        objc_property_t property = properties[index];
+    // member is property
+    for (unsigned int index = 0; index < [properties count]; index++) {
+        PropertyModel *property = [properties objectAtIndex:index];
         
-#if __has_feature(objc_arc)
-        NSString *name = [NSString stringWithUTF8String:property_getName(property)];
-#else
-        NSString *name = [[NSString stringWithUTF8String:property_getName(property)] autorelease];
-#endif
-        NSString *attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
-        id value = [object valueForKey:name];
-        [key addObject:name];     
+        id value = [object valueForKey:property.name];
+        [key addObject:property.name];
         
         if (value == NULL)  //value is null
             [content addObject:[NSNull null]];
         else {
-            if ([attributes rangeOfString:@"T@\""].length > 0) {
+            if ([property.attributes rangeOfString:@"T@\""].length > 0) {
                 // the type of member is class
-                int endIndex = [attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [attributes length] - 4)].location;
-                NSString *className = [attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
+                int endIndex = [property.attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [property.attributes length] - 4)].location;
+                NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
                 
                 if ([className isEqualToString:@"NSString"] ||
                     [className isEqualToString:@"NSNumber"]) {
@@ -236,10 +287,7 @@
     }
     self = [self initWithObjects:content forKeys:key];
     
-    free(properties);
-#if __has_feature(objc_arc)
-    
-#else
+#if !__has_feature(objc_arc)
     [content release];
     [key release];
 #endif

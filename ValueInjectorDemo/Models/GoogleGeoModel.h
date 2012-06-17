@@ -30,9 +30,11 @@
 @property (nonatomic, retain) NSString *request;
 @end
 
-
-@interface GoogleGeoModel : NSObject
+@interface GoogleGeoBaseModel : NSObject
 @property (nonatomic, retain) NSString *name;
+@end
+
+@interface GoogleGeoModel : GoogleGeoBaseModel
 @property (nonatomic, retain) GoogleGeoStatus *Status;
 @property (nonatomic, retain) NSArray *Placemark;
 @end
