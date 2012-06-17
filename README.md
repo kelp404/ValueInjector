@@ -1,4 +1,4 @@
-##ValueInjector 1.0.2
+#ValueInjector 1.0.3
 http://kelp.phate.org/2012/05/inject-value-from-nsdictionary-to.html
 
 Kelp http://kelp.phate.org/ <br/>
@@ -16,7 +16,7 @@ After import ValueInjector.h, NSObject will be add a new message "injectFromObje
 **initWithObject** converts custom class to NSDictionary. When you want to serialize custom class(strong typing), you can use initWithObject to initialize NSDictionary with custom class.
 
 
-###Inject value from NSDictionary to custom class
+##Inject value from NSDictionary to custom class
 
 ```objective-c
 NSObject (ValueInjector)
@@ -29,7 +29,7 @@ YourClass *model = [[YourClass alloc] init];
 ```
 
 
-###Initialize NSDictionary with custom class
+##Initialize NSDictionary with custom class
 
 ```objective-c
 NSDictionary (ValueInjector)
@@ -40,3 +40,5 @@ YourClass *model = [[YourClass alloc] init];
 // set value of model ...
 NSDictionary *dictionary = [[NSDictionary alloc] initWithObject:model];
 ```
+
+Cocoa Reflection Refer: https://developer.apple.com/library/mac/#documentation/cocoa/Reference/ObjCRuntimeRef/Reference/reference.html
