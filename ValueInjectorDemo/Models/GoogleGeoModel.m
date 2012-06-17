@@ -24,6 +24,10 @@
 @synthesize Accuracy, AddressLine;
 @end
 
+@implementation GoogleGeoBaseModel
+@synthesize name;
+@end
+
 @implementation GoogleGeoPlacemark
 @synthesize id, address, AddressDetails, ExtendedData, Point;
 @end
