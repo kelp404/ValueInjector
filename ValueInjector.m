@@ -12,8 +12,13 @@
 
 #pragma mark - PropertyModel
 @interface PropertyModel : NSObject
+#if __has_feature(objc_arc)
+@property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *attributes;
+#else
 @property (retain, nonatomic) NSString *name;
 @property (retain, nonatomic) NSString *attributes;
+#endif
 @end
 @implementation PropertyModel
 @synthesize name, attributes;

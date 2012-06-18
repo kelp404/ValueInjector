@@ -32,7 +32,7 @@
     // instance strong typing
     GoogleGeoModel *model = [GoogleGeoModel new];
     // convert weak typing to strong typing
-    [model injectFromObject:geo];
+    [model injectFromObject:geo arrayClass:[GoogleGeoPlacemark class]];
     
     STAssertEqualObjects(model.name, @"台北車站", nil);
     
