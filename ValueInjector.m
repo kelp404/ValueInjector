@@ -1,6 +1,6 @@
 //
 //  ValueInjector.m
-//  ValueInjector   1.0.3
+//  ValueInjector   1.0.5
 //
 //  Created by Kelp on 12/5/6.
 //  Copyright (c) 2012 Kelp http://kelp.phate.org/
@@ -66,9 +66,10 @@
 // Inject value from NSDictionary to custom class
 - (id)injectFromObject:(NSObject *)object
 {
-    // get the name of custom class
-    NSString *targetClassName = [NSString stringWithUTF8String:class_getName([self class])];
-    
+    return [self injectFromObject:object arrayClass:nil];
+}
+- (id)injectFromObject:(NSObject *)object arrayClass:(__unsafe_unretained Class)cls
+{
     // list properties of custom class and inject value
 #if __has_feature(objc_arc)
     ValueInjectorUtility *viu = [ValueInjectorUtility new];
@@ -91,9 +92,25 @@
             // get class type name from attributes of property
             NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
             
+            // NSString or NSNumber
             if ([className isEqualToString:@"NSString"] ||
                 [className isEqualToString:@"NSNumber"]) {
                 [self setValue:value forKey:property.name];
+            }
+            // NSDate
+            else if ([className isEqualToString:@"NSDate"]) {
+                if (value != nil) {
+#if __has_feature(objc_arc)
+                    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+#else
+                    NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
+#endif
+                    [dateFormatter setDateFormat:ValueInjectorTimeFormate];
+                    [self setValue:[dateFormatter dateFromString:value] forKey:property.name];
+                }
+                else {
+                    [self setValue:nil forKey:property.name];
+                }
             }
             // NSDictionary
             else if ([className isEqualToString:@"NSDictionary"]) {
@@ -112,18 +129,10 @@
             }
             // NSArray
             else if ([className isEqualToString:@"NSArray"]) {
-                NSString *clName = [targetClassName substringFromIndex:[targetClassName length] - 5];
-                if ([clName isEqualToString:@"Model"]) {
-                    clName = [NSString stringWithFormat:@"%@%@", [targetClassName substringToIndex:[targetClassName length] - 5], property.name];
-                }
-                else {
-                    clName = [NSString stringWithFormat:@"%@%@", clName, property.name];
-                }
-                Class cl = NSClassFromString(clName);
 #if __has_feature(objc_arc)
-                id testModel = [cl new];
+                id testModel = [cls new];
 #else
-                id testModel = [[cl new] autorelease];
+                id testModel = [[cls new] autorelease];
 #endif
                 // test model init success
                 if (testModel == NULL) {
@@ -138,9 +147,9 @@
                     // list all item in NSArray
                     for (id item in value) {
 #if __has_feature(objc_arc)
-                        id model = [cl new];
+                        id model = [cls new];
 #else
-                        id model = [[cl new] autorelease];
+                        id model = [[cls new] autorelease];
 #endif
                         [model injectFromObject:item];
                         // put model into result array

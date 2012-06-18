@@ -1,10 +1,16 @@
 /*
-  ValueInjector   1.0.3
+  ValueInjector   1.0.5
 
   Created by Kelp on 12/5/6.
   Copyright (c) 2012 Kelp http://kelp.phate.org/
   MIT License
 
+ 1.0.5      2012-06-18
+    ValueInjector supported NSDate
+ 
+ 1.0.4      2012-06-17
+    change the way to instance typing in NSArray
+ 
  1.0.3      2012-06-17
     fixed bug: could not get property with extended class
  
@@ -27,9 +33,11 @@
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 
+#define ValueInjectorTimeFormate @"yyyy/MM/dd HH:mm"
 
 @interface NSObject (ValueInjector)
 - (id)injectFromObject:(NSObject *)object;
+- (id)injectFromObject:(NSObject *)object arrayClass:(Class)cls;
 @end
 
 @interface NSDictionary (ValueInjector)
