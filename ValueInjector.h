@@ -1,10 +1,13 @@
 /*
-  ValueInjector   1.0.5
+  ValueInjector   1.0.6
 
   Created by Kelp on 12/5/6.
   Copyright (c) 2012 Kelp http://kelp.phate.org/
   MIT License
 
+ 1.0.6      2012-06-19
+    new message injectFromdotNewDictionary
+ 
  1.0.5      2012-06-18
     ValueInjector supported NSDate
  
@@ -38,6 +41,7 @@
 @interface NSObject (ValueInjector)
 - (id)injectFromObject:(NSObject *)object;
 - (id)injectFromObject:(NSObject *)object arrayClass:(Class)cls;
+- (id)injectFromdotNewDictionary:(NSArray *)object;
 @end
 
 @interface NSDictionary (ValueInjector)

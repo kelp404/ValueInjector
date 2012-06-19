@@ -10,6 +10,7 @@
 #import "JSONKit.h"
 #import "GoogleGeoModel.h"
 #import "ValueInjector.h"
+#import "dotNetTestModel.h"
 
 @interface ValueInjectorDemoTests : SenTestCase
 

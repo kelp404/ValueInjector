@@ -62,4 +62,23 @@
     }
 }
 
+- (void)testInjectFromdotNewDictionary
+{
+    NSString *json = @"[{\"Key\":\"Id\",\"Value\":\"114077570386978\"},{\"Key\":\"Title\",\"Value\":\"Kelp-test01\"},{\"Key\":\"CheckNum\",\"Value\":0},{\"Key\":\"Total\",\"Value\":2},{\"Key\":\"SoldAmount\",\"Value\":\"NT$0\"}]";
+    NSArray *weak = [json objectFromJSONString];
+    dotNetTestModel *model = [dotNetTestModel new];
+    // convert weak typing to strong typing
+    [model injectFromdotNewDictionary:weak];
+    
+    STAssertEqualObjects(model.Id, @"114077570386978", nil);
+    STAssertEqualObjects(model.Title, @"Kelp-test01", nil);
+    if (model.CheckNum != 0) {
+        STFail(@"InjectFromdotNewDictionary Error");
+    }
+    if (model.Total != 2) {
+        STFail(@"InjectFromdotNewDictionary Error");
+    }
+    STAssertEqualObjects(model.SoldAmount, @"NT$0", nil);
+}
+
 @end

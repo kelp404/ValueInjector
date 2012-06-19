@@ -23,6 +23,8 @@
 		21B8D621157B68E30012F4B4 /* ValueInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D620157B68E30012F4B4 /* ValueInjector.m */; };
 		21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D625157B68FC0012F4B4 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */; };
+		21FF879E15908753002BD85F /* dotNetTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 21FF879D15908753002BD85F /* dotNetTestModel.m */; };
+		21FF87A015908CAF002BD85F /* ValueInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D620157B68E30012F4B4 /* ValueInjector.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,8 @@
 		21B8D625157B68FC0012F4B4 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		21B8D627157B68FC0012F4B4 /* GoogleGeoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleGeoModel.h; sourceTree = "<group>"; };
 		21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleGeoModel.m; sourceTree = "<group>"; };
+		21FF879C15908753002BD85F /* dotNetTestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dotNetTestModel.h; sourceTree = "<group>"; };
+		21FF879D15908753002BD85F /* dotNetTestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dotNetTestModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +183,8 @@
 			children = (
 				21B8D627157B68FC0012F4B4 /* GoogleGeoModel.h */,
 				21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */,
+				21FF879C15908753002BD85F /* dotNetTestModel.h */,
+				21FF879D15908753002BD85F /* dotNetTestModel.m */,
 			);
 			name = Models;
 			path = ValueInjectorDemo/Models;
@@ -297,6 +303,7 @@
 				21B8D621157B68E30012F4B4 /* ValueInjector.m in Sources */,
 				21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */,
 				21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */,
+				21FF879E15908753002BD85F /* dotNetTestModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +311,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21FF87A015908CAF002BD85F /* ValueInjector.m in Sources */,
 				21B8D612157B68A00012F4B4 /* ValueInjectorDemoTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

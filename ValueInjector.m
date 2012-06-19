@@ -189,6 +189,35 @@
 
     return self;
 }
+
+// Inject value from .NET Nonsensical dictionary serialization
+// Nonsensical dictionary serialization : http://stackoverflow.com/questions/4559991/any-way-to-make-datacontractjsonserializer-serialize-dictionaries-properly
+- (id)injectFromdotNewDictionary:(NSArray *)object
+{
+    for (unsigned int index = 0; index < [object count]; index++) {
+        NSDictionary *target = [object objectAtIndex:index];
+        NSString *targetName = [target objectForKey:@"Key"];
+        objc_property_t property = class_getProperty([self class], [targetName cStringUsingEncoding:NSUTF8StringEncoding]);
+        NSString *attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+        
+        // NSDate
+        if ([attributes isEqualToString:@"T@\"NSDate"]) {
+#if __has_feature(objc_arc)
+            NSDateFormatter *dateFormatter = [NSDateFormatter new];
+#else
+            NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
+#endif
+            [dateFormatter setDateFormat:ValueInjectorTimeFormate];
+            [self setValue:[dateFormatter dateFromString:[target objectForKey:@"Value"]] forKey:targetName];
+        }
+        // other classes
+        else {
+            [self setValue:[target objectForKey:@"Value"] forKey:targetName];
+        }
+    }
+    
+    return self;
+}
 @end
 
 @implementation NSDictionary (ValueInjector)
