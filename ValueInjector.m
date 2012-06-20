@@ -88,10 +88,10 @@
         
         id value = [object valueForKey:property.name];
         
-        if (value == NULL)
+        if (value == nil || [value isKindOfClass:[NSNull class]])
             continue;
         
-        if ([property.attributes rangeOfString:@"T@\""].length > 0) {
+        if ([property.attributes rangeOfString:@"T@\""].location != NSNotFound) {
             // the type of peoperty is class
             int endIndex = [property.attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [property.attributes length] - 4)].location;
             // get class type name from attributes of property
@@ -120,7 +120,7 @@
             // NSDictionary
             else if ([className isEqualToString:@"NSDictionary"]) {
                 // stop inject children propertis and reconstruct NSDictionary
-                if (value == NULL) {
+                if (value == nil || [value isKindOfClass:[NSNull class]]) {
                     [self setValue:value forKey:property.name];
                 }
                 else {
@@ -140,7 +140,7 @@
                 id testModel = [[cls new] autorelease];
 #endif
                 // test model init success
-                if (testModel == NULL) {
+                if (testModel == nil || [testModel isKindOfClass:[NSNull class]]) {
                     [self setValue:value forKey:property.name];
                 }
                 else {
@@ -158,7 +158,7 @@
 #endif
                         [model injectFromObject:item];
                         // put model into result array
-                        if (model == NULL) {
+                        if (model == nil || [model isKindOfClass:[NSNull class]]) {
                             [result addObject:[NSNull null]];
                         }
                         else {
@@ -186,7 +186,7 @@
             [self setValue:value forKey:property.name];
         }
     }
-
+    
     return self;
 }
 
@@ -247,10 +247,10 @@
         id value = [object valueForKey:property.name];
         [key addObject:property.name];
         
-        if (value == NULL)  //value is null
+        if (value == nil || [value isKindOfClass:[NSNull class]])  //value is null
             [content addObject:[NSNull null]];
         else {
-            if ([property.attributes rangeOfString:@"T@\""].length > 0) {
+            if ([property.attributes rangeOfString:@"T@\""].location != NSNotFound) {
                 // the type of member is class
                 int endIndex = [property.attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [property.attributes length] - 4)].location;
                 NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
@@ -275,7 +275,7 @@
                 else if ([className isEqualToString:@"NSArray"]) {
                     NSArray *source = value;
                     @try {
-                        if (value == NULL || [source count] == 0) {
+                        if (value == nil || [value isKindOfClass:[NSNull class]] || [source count] == 0) {
                             //array is empty
                             [content addObject:value];
                         }
