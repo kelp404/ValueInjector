@@ -97,9 +97,12 @@
             // get class type name from attributes of property
             NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
             
-            // NSString or NSNumber
-            if ([className isEqualToString:@"NSString"] ||
-                [className isEqualToString:@"NSNumber"]) {
+            // NSString
+            if ([className isEqualToString:@"NSString"]) {
+                [self setValue:[NSString stringWithFormat:@"%@", value] forKey:property.name];
+            }
+            // NSNumber
+            else if ([className isEqualToString:@"NSNumber"]) {
                 [self setValue:value forKey:property.name];
             }
             // NSDate
