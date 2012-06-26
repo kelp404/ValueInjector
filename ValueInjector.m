@@ -26,10 +26,19 @@
 
 
 #pragma mark - ValueInjectorUtility
-@interface ValueInjectorUtility : NSObject
-- (NSArray *)getPropertyList:(Class)cls;
-@end
 @implementation ValueInjectorUtility
+@synthesize timeFormate;
+static ValueInjectorUtility *_instance;
++ (id)sharedInstance
+{
+    @synchronized (_instance) {
+        if (_instance == nil) {
+            _instance = [self new];
+            _instance.timeFormate = ValueInjectorTimeFormate;
+        }
+        return _instance;
+    }
+}
 - (NSArray *)getPropertyList:(Class)cls
 {
 #if __has_feature(objc_arc)
@@ -76,12 +85,7 @@
 - (id)injectFromObject:(NSObject *)object arrayClass:(__unsafe_unretained Class)cls
 {
     // list properties of custom class and inject value
-#if __has_feature(objc_arc)
-    ValueInjectorUtility *viu = [ValueInjectorUtility new];
-#else
-    ValueInjectorUtility *viu = [[ValueInjectorUtility new] autorelease];
-#endif
-    NSArray *properties = [viu getPropertyList:[self class]];
+    NSArray *properties = [[ValueInjectorUtility sharedInstance] getPropertyList:[self class]];
     
     for (unsigned int index = 0; index < [properties count]; index++) {
         PropertyModel *property = [properties objectAtIndex:index];
@@ -113,7 +117,8 @@
 #else
                     NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
 #endif
-                    [dateFormatter setDateFormat:ValueInjectorTimeFormate];
+                    ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+                    [dateFormatter setDateFormat:viu.timeFormate];
                     [self setValue:[dateFormatter dateFromString:value] forKey:property.name];
                 }
                 else {
@@ -189,7 +194,7 @@
             [self setValue:value forKey:property.name];
         }
     }
-    
+
     return self;
 }
 
@@ -210,7 +215,8 @@
 #else
             NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
 #endif
-            [dateFormatter setDateFormat:ValueInjectorTimeFormate];
+            ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+            [dateFormatter setDateFormat:viu.timeFormate];
             [self setValue:[dateFormatter dateFromString:[target objectForKey:@"Value"]] forKey:targetName];
         }
         // other classes
@@ -231,12 +237,7 @@
     NSMutableArray *key = [NSMutableArray new];
     
     // get properties of custom class
-#if __has_feature(objc_arc)
-    ValueInjectorUtility *viu = [ValueInjectorUtility new];
-#else
-    ValueInjectorUtility *viu = [[ValueInjectorUtility new] autorelease];
-#endif
-    NSArray *properties = [viu getPropertyList:[object class]];
+    NSArray *properties = [[ValueInjectorUtility sharedInstance] getPropertyList:[object class]];
     
     // no property
     if ([properties count] == 0) {

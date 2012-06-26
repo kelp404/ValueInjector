@@ -35,8 +35,17 @@
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
-
 #define ValueInjectorTimeFormate @"yyyy/MM/dd HH:mm"
+
+#pragma mark - ValueInjectorUtility
+@interface ValueInjectorUtility : NSObject
++ (id)sharedInstance;
+#if __has_feature(objc_arc)
+    @property (strong) NSString *timeFormate;
+#else
+    @property (retain) NSString *timeFormate;
+#endif
+@end
 
 @interface NSObject (ValueInjector)
 - (id)injectFromObject:(NSObject *)object;
