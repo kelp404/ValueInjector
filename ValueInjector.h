@@ -1,10 +1,13 @@
 /*
-  ValueInjector   1.0.6
+  ValueInjector   1.0.7
 
   Created by Kelp on 12/5/6.
   Copyright (c) 2012 Kelp http://kelp.phate.org/
   MIT License
 
+ 1.0.7      2012*07*12
+    performance optimization: Upgrade 70％
+ 
  1.0.6      2012-06-19
     new message injectFromdotNewDictionary
  
@@ -41,9 +44,9 @@
 @interface ValueInjectorUtility : NSObject
 + (id)sharedInstance;
 #if __has_feature(objc_arc)
-    @property (strong) NSString *timeFormate;
+@property (strong) NSDateFormatter *dateFormatter;
 #else
-    @property (retain) NSString *timeFormate;
+@property (retain) NSDateFormatter *dateFormatter;
 #endif
 @end
 

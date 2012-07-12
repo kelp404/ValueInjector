@@ -1,6 +1,6 @@
 //
 //  ValueInjector.m
-//  ValueInjector   1.0.5
+//  ValueInjector   1.0.7
 //
 //  Created by Kelp on 12/5/6.
 //  Copyright (c) 2012 Kelp http://kelp.phate.org/
@@ -14,27 +14,31 @@
 @interface PropertyModel : NSObject
 #if __has_feature(objc_arc)
 @property (strong, nonatomic) NSString *name;
-@property (strong, nonatomic) NSString *attributes;
 #else
 @property (retain, nonatomic) NSString *name;
-@property (retain, nonatomic) NSString *attributes;
 #endif
+@property (nonatomic) const char *attributesCString;
 @end
 @implementation PropertyModel
-@synthesize name, attributes;
+@synthesize name, attributesCString;
 @end
 
 
 #pragma mark - ValueInjectorUtility
 @implementation ValueInjectorUtility
-@synthesize timeFormate;
+@synthesize dateFormatter = _dateFormatter;
 static ValueInjectorUtility *_instance;
 + (id)sharedInstance
 {
     @synchronized (_instance) {
         if (_instance == nil) {
             _instance = [self new];
-            _instance.timeFormate = ValueInjectorTimeFormate;
+#if __has_feature(objc_arc)
+            _instance.dateFormatter = [NSDateFormatter new];
+#else
+            _instance.dateFormatter = [[NSDateFormatter new] autorelease];
+#endif
+            [_instance.dateFormatter setDateFormat:ValueInjectorTimeFormate];
         }
         return _instance;
     }
@@ -58,17 +62,15 @@ static ValueInjectorUtility *_instance;
         objc_property_t property = properties[index];
         
         model.name = [NSString stringWithUTF8String:property_getName(property)];
-        model.attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+        model.attributesCString = property_getAttributes(property);
         [result addObject:model];
     }
     free(properties);
     
     // scan super class
     Class superCls = class_getSuperclass([cls class]);
-    NSString *superName = [NSString stringWithUTF8String:class_getName(superCls)];
-    if (![superName isEqualToString:@"NSObject"]) {
-        NSArray *superProperties = [self getPropertyList:superCls];
-        [result addObjectsFromArray:superProperties];
+    if ([superCls class] != [NSObject class]) {
+        [result addObjectsFromArray:[self getPropertyList:superCls]];
     }
     return result;
 }
@@ -95,60 +97,51 @@ static ValueInjectorUtility *_instance;
         if (value == nil || [value isKindOfClass:[NSNull class]])
             continue;
         
-        if ([property.attributes rangeOfString:@"T@\""].location != NSNotFound) {
+        const char *start = strstr(property.attributesCString, "T@\"");
+        if (start != 0x00) {
             // the type of peoperty is class
-            int endIndex = [property.attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [property.attributes length] - 4)].location;
+            char *attcontent;
+            attcontent = malloc(strlen(start) + 1);
+            strcpy(attcontent, start + 3);
+            unsigned long endIndex = strcspn(attcontent, "\"");
             // get class type name from attributes of property
-            NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
+            char *classNameCString;
+            classNameCString = malloc(endIndex + 1);
+            strncpy(classNameCString, attcontent, endIndex);
+            classNameCString[endIndex] = '\0';
+            free(attcontent);
             
             // NSString
-            if ([className isEqualToString:@"NSString"]) {
-                [self setValue:[NSString stringWithFormat:@"%@", value] forKey:property.name];
-            }
-            // NSNumber
-            else if ([className isEqualToString:@"NSNumber"]) {
-                [self setValue:value forKey:property.name];
-            }
-            // NSDate
-            else if ([className isEqualToString:@"NSDate"]) {
-                if (value != nil) {
-#if __has_feature(objc_arc)
-                    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-#else
-                    NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
-#endif
-                    ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
-                    [dateFormatter setDateFormat:viu.timeFormate];
-                    [self setValue:[dateFormatter dateFromString:value] forKey:property.name];
-                }
-                else {
-                    [self setValue:nil forKey:property.name];
-                }
-            }
-            // NSDictionary
-            else if ([className isEqualToString:@"NSDictionary"]) {
-                // stop inject children propertis and reconstruct NSDictionary
-                if (value == nil || [value isKindOfClass:[NSNull class]]) {
+            if (strcmp(classNameCString, "NSString") == 0) {
+                if ([value class] == [NSString class]) {
                     [self setValue:value forKey:property.name];
                 }
                 else {
-                    @try {
-                        [self setValue:[NSDictionary dictionaryWithDictionary:value] forKey:property.name];
-                    }
-                    @catch (NSException *exception) {
-                        [self setValue:value forKey:property.name];
-                    }   
+                    [self setValue:[NSString stringWithFormat:@"%@", value] forKey:property.name];
+                }
+            }
+            // NSNumber
+            else if (strcmp(classNameCString, "NSNumber") == 0) {
+                [self setValue:value forKey:property.name];
+            }
+            // NSDate
+            else if (strcmp(classNameCString, "NSDate") == 0) {
+                ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+                [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
+            }
+            // NSDictionary
+            else if (strcmp(classNameCString, "NSDictionary") == 0) {
+                // stop inject children propertis and reconstruct NSDictionary
+                @try {
+                    [self setValue:[NSDictionary dictionaryWithDictionary:value] forKey:property.name];
+                }
+                @catch (NSException *exception) {
+                    [self setValue:value forKey:property.name];
                 }
             }
             // NSArray
-            else if ([className isEqualToString:@"NSArray"]) {
-#if __has_feature(objc_arc)
-                id testModel = [cls new];
-#else
-                id testModel = [[cls new] autorelease];
-#endif
-                // test model init success
-                if (testModel == nil || [testModel isKindOfClass:[NSNull class]]) {
+            else if (strcmp(classNameCString, "NSArray") == 0) {
+                if (cls == nil) {
                     [self setValue:value forKey:property.name];
                 }
                 else {
@@ -174,12 +167,12 @@ static ValueInjectorUtility *_instance;
                         }
                     }
                     // inject value to property of custom class
-                    [self setValue:[NSArray arrayWithArray:result] forKey:property.name];
+                    [self setValue:result forKey:property.name];
                 }
             }
             // custom class
             else {
-                Class cl = NSClassFromString(className);
+                Class cl = NSClassFromString([NSString stringWithCString:classNameCString encoding:NSUTF8StringEncoding]);
 #if __has_feature(objc_arc)
                 id model = [cl new];
 #else
@@ -188,13 +181,14 @@ static ValueInjectorUtility *_instance;
                 [model injectFromObject:value];
                 [self setValue:model forKey:property.name];
             }
+            free(classNameCString);
         }
         else {
             // the type of member is not class
             [self setValue:value forKey:property.name];
         }
     }
-
+    
     return self;
 }
 
@@ -206,18 +200,12 @@ static ValueInjectorUtility *_instance;
         NSDictionary *target = [object objectAtIndex:index];
         NSString *targetName = [target objectForKey:@"Key"];
         objc_property_t property = class_getProperty([self class], [targetName cStringUsingEncoding:NSUTF8StringEncoding]);
-        NSString *attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+        const char *attributes = property_getAttributes(property);
         
         // NSDate
-        if ([attributes isEqualToString:@"T@\"NSDate"]) {
-#if __has_feature(objc_arc)
-            NSDateFormatter *dateFormatter = [NSDateFormatter new];
-#else
-            NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
-#endif
+        if (strcmp(attributes, "T@\"NSDate") == 0) {
             ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
-            [dateFormatter setDateFormat:viu.timeFormate];
-            [self setValue:[dateFormatter dateFromString:[target objectForKey:@"Value"]] forKey:targetName];
+            [self setValue:[viu.dateFormatter dateFromString:[target objectForKey:@"Value"]] forKey:targetName];
         }
         // other classes
         else {
@@ -254,16 +242,24 @@ static ValueInjectorUtility *_instance;
         if (value == nil || [value isKindOfClass:[NSNull class]])  //value is null
             [content addObject:[NSNull null]];
         else {
-            if ([property.attributes rangeOfString:@"T@\""].location != NSNotFound) {
-                // the type of member is class
-                int endIndex = [property.attributes rangeOfString:@"\"" options:NSLiteralSearch range:NSMakeRange(3, [property.attributes length] - 4)].location;
-                NSString *className = [property.attributes substringWithRange:NSMakeRange(3, endIndex - 3)];
+            const char *start = strstr(property.attributesCString, "T@\"");
+            if (start != 0x00) {
+                char *attcontent;
+                attcontent = malloc(strlen(start) + 1);
+                strcpy(attcontent, start + 3);
+                unsigned long endIndex = strcspn(attcontent, "\"");
+                // get class type name from attributes of property
+                char *classNameCString;
+                classNameCString = malloc(endIndex + 1);
+                strncpy(classNameCString, attcontent, endIndex);
+                classNameCString[endIndex] = '\0';
+                free(attcontent);
                 
-                if ([className isEqualToString:@"NSString"] ||
-                    [className isEqualToString:@"NSNumber"]) {
+                if (strcmp(classNameCString, "NSString") == 0 ||
+                    strcmp(classNameCString, "NSNumber") == 0) {
                     [content addObject:value];
                 }
-                else if ([className isEqualToString:@"NSDictionary"]) {
+                else if (strcmp(classNameCString, "NSDictionary") == 0) {
                     //NSDictionary
                     @try {
                         [content addObject:[NSDictionary dictionaryWithDictionary:value]];
@@ -276,17 +272,17 @@ static ValueInjectorUtility *_instance;
 #endif
                     }
                 }
-                else if ([className isEqualToString:@"NSArray"]) {
+                else if (strcmp(classNameCString, "NSArray") == 0) {
                     NSArray *source = value;
                     @try {
-                        if (value == nil || [value isKindOfClass:[NSNull class]] || [source count] == 0) {
+                        if ([source count] == 0) {
                             //array is empty
                             [content addObject:value];
                         }
                         else {
-                            NSString *arrayContent = [NSString stringWithUTF8String:class_getName([[source objectAtIndex:0] class])];
-                            if ([arrayContent isEqualToString:@"NSString"] ||
-                                [arrayContent isEqualToString:@"NSNumber"]) {
+                            const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
+                            if (strcmp(arrayContent, "NSString") == 0 ||
+                                strcmp(arrayContent, "NSNumber") == 0) {
                                 [content addObject:value];
                             }
                             else {
@@ -325,6 +321,7 @@ static ValueInjectorUtility *_instance;
 #endif
                     [content addObject:dic];
                 }
+                free(classNameCString);
             }
             else {
                 //the type of member is not class
