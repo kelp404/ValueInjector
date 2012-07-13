@@ -194,7 +194,7 @@ static ValueInjectorUtility *_instance;
 
 // Inject value from .NET Nonsensical dictionary serialization
 // Nonsensical dictionary serialization : http://stackoverflow.com/questions/4559991/any-way-to-make-datacontractjsonserializer-serialize-dictionaries-properly
-- (id)injectFromdotNewDictionary:(NSArray *)object
+- (id)injectFromdotNetDictionary:(NSArray *)object
 {
     for (unsigned int index = 0; index < [object count]; index++) {
         NSDictionary *target = [object objectAtIndex:index];

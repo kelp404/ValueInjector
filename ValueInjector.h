@@ -53,7 +53,7 @@
 @interface NSObject (ValueInjector)
 - (id)injectFromObject:(NSObject *)object;
 - (id)injectFromObject:(NSObject *)object arrayClass:(Class)cls;
-- (id)injectFromdotNewDictionary:(NSArray *)object;
+- (id)injectFromdotNetDictionary:(NSArray *)object;
 @end
 
 @interface NSDictionary (ValueInjector)

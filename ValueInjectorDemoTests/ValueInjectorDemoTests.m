@@ -68,7 +68,7 @@
     NSArray *weak = [json objectFromJSONString];
     dotNetTestModel *model = [dotNetTestModel new];
     // convert weak typing to strong typing
-    [model injectFromdotNewDictionary:weak];
+    [model injectFromdotNetDictionary:weak];
     
     STAssertEqualObjects(model.Id, @"114077570386978", nil);
     STAssertEqualObjects(model.Title, @"Kelp-test01", nil);
