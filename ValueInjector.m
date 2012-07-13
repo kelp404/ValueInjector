@@ -86,9 +86,28 @@ static ValueInjectorUtility *_instance;
 }
 - (id)injectFromObject:(NSObject *)object arrayClass:(__unsafe_unretained Class)cls
 {
+    if ([self isKindOfClass:[NSMutableArray class]]) {
+        for (id item in (NSArray *)object) {
+#if __has_feature(objc_arc)
+            id instance = [cls new];
+#else
+            id instance = [[cls new] autorelease];
+#endif
+            [instance injectCoreFromObject:item arrayClass:nil];
+            [(NSMutableArray *)self addObject:instance];
+        }
+        return self;
+    }
+    else {
+        return [self injectCoreFromObject:object arrayClass:cls];
+    }
+}
+- (id)injectCoreFromObject:(NSObject *)object arrayClass:(__unsafe_unretained Class)cls
+{
     // list properties of custom class and inject value
     NSArray *properties = [[ValueInjectorUtility sharedInstance] getPropertyList:[self class]];
     
+    // inject target is custom class
     for (unsigned int index = 0; index < [properties count]; index++) {
         PropertyModel *property = [properties objectAtIndex:index];
         
@@ -157,7 +176,7 @@ static ValueInjectorUtility *_instance;
 #else
                         id model = [[cls new] autorelease];
 #endif
-                        [model injectFromObject:item];
+                        [model injectCoreFromObject:item arrayClass:nil];
                         // put model into result array
                         if (model == nil || [model isKindOfClass:[NSNull class]]) {
                             [result addObject:[NSNull null]];
@@ -178,7 +197,7 @@ static ValueInjectorUtility *_instance;
 #else
                 id model = [[cl new] autorelease];
 #endif
-                [model injectFromObject:value];
+                [model injectCoreFromObject:value arrayClass:nil];
                 [self setValue:model forKey:property.name];
             }
             free(classNameCString);
@@ -196,8 +215,7 @@ static ValueInjectorUtility *_instance;
 // Nonsensical dictionary serialization : http://stackoverflow.com/questions/4559991/any-way-to-make-datacontractjsonserializer-serialize-dictionaries-properly
 - (id)injectFromdotNetDictionary:(NSArray *)object
 {
-    for (unsigned int index = 0; index < [object count]; index++) {
-        NSDictionary *target = [object objectAtIndex:index];
+    for (NSDictionary *target in object) {
         NSString *targetName = [target objectForKey:@"Key"];
         objc_property_t property = class_getProperty([self class], [targetName cStringUsingEncoding:NSUTF8StringEncoding]);
         const char *attributes = property_getAttributes(property);
