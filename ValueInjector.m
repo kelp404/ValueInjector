@@ -292,9 +292,6 @@ static ValueInjectorUtility *_instance;
                         [self setValue:[NSMutableString stringWithFormat:@"%@", value] forKey:property.name];
                     }
                     break;
-                case VINumber:
-                    [self setValue:value forKey:property.name];
-                    break;
                 case VIDictionary:
                     // stop inject children propertis and reconstruct NSDictionary
                     @try {
@@ -313,7 +310,10 @@ static ValueInjectorUtility *_instance;
                         [self setValue:value forKey:property.name];
                     }
                     break;
+                case VINumber:
+                case VIData:
                 case VIBaseType:
+                default:
                     [self setValue:value forKey:property.name];
                     break;
             }
