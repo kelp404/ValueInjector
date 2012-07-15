@@ -10,17 +10,37 @@
 #import "ValueInjector.h"
 
 
+#pragma mark - PropertyType
+enum {
+    VIString = 0,
+    VIMutableString,
+    VINumber,
+    VIArray,
+    VIMutableArray,
+    VIDictionary,
+    VIMutableDictionary,
+    VIDate,
+    VIData,
+    VIMutableData,
+    VICustom,
+    VIBaseType
+};
+typedef NSInteger VIType;
+
+
 #pragma mark - PropertyModel
 @interface PropertyModel : NSObject
 #if __has_feature(objc_arc)
 @property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *customClassName;
 #else
 @property (retain, nonatomic) NSString *name;
+@property (retain, nonatomic) NSString *customClassName;
 #endif
-@property (nonatomic) const char *attributesCString;
+@property (nonatomic) VIType type;
 @end
 @implementation PropertyModel
-@synthesize name, attributesCString;
+@synthesize name, customClassName, type;
 @end
 
 
@@ -61,8 +81,72 @@ static ValueInjectorUtility *_instance;
 #endif
         objc_property_t property = properties[index];
         
+        const char *attributes = property_getAttributes(property);
+        const char *start = strstr(attributes, "T@\"");
+        if (start != 0x00) {
+            // the type of peoperty is class
+            char *attcontent;
+            attcontent = malloc(strlen(start) + 1);
+            strcpy(attcontent, start + 3);
+            unsigned long endIndex = strcspn(attcontent, "\"");
+            // get class type name from attributes of property
+            char *classNameCString;
+            classNameCString = malloc(endIndex + 1);
+            strncpy(classNameCString, attcontent, endIndex);
+            classNameCString[endIndex] = '\0';
+            free(attcontent);
+            
+            // NSString
+            if (strcmp(classNameCString, "NSString") == 0) {
+                model.type = VIString;
+            }
+            // NSMutableString
+            else if (strcmp(classNameCString, "NSMutableString") == 0) {
+                model.type = VIMutableString;
+            }
+            // NSNumber
+            else if (strcmp(classNameCString, "NSNumber") == 0) {
+                model.type = VINumber;
+            }
+            // NSArray
+            else if (strcmp(classNameCString, "NSArray") == 0) {
+                model.type = VIArray;
+            }
+            // NSMutableArray
+            else if (strcmp(classNameCString, "NSMutableArray") == 0) {
+                model.type = VIMutableArray;
+            }
+            // NSDictionary
+            else if (strcmp(classNameCString, "NSDictionary") == 0) {
+                model.type = VIDictionary;
+            }
+            // NSMutableDictionary
+            else if (strcmp(classNameCString, "NSMutableDictionary") == 0) {
+                model.type = VIMutableDictionary;
+            }
+            // NSDate
+            else if (strcmp(classNameCString, "NSDate") == 0) {
+                model.type = VIDate;
+            }
+            // NSData
+            else if (strcmp(classNameCString, "NSData") == 0) {
+                model.type = VIData;
+            }
+            // NSMutableData
+            else if (strcmp(classNameCString, "NSMutableData") == 0) {
+                model.type = VIMutableData;
+            }
+            // custom class
+            else {
+                model.type = VICustom;
+                model.customClassName = [NSString stringWithUTF8String:classNameCString];
+            }
+            free(classNameCString);
+        }
+        else {
+            model.type = VIBaseType;
+        }
         model.name = [NSString stringWithUTF8String:property_getName(property)];
-        model.attributesCString = property_getAttributes(property);
         [result addObject:model];
     }
     free(properties);
@@ -116,95 +200,123 @@ static ValueInjectorUtility *_instance;
         if (value == nil || [value isKindOfClass:[NSNull class]])
             continue;
         
-        const char *start = strstr(property.attributesCString, "T@\"");
-        if (start != 0x00) {
-            // the type of peoperty is class
-            char *attcontent;
-            attcontent = malloc(strlen(start) + 1);
-            strcpy(attcontent, start + 3);
-            unsigned long endIndex = strcspn(attcontent, "\"");
-            // get class type name from attributes of property
-            char *classNameCString;
-            classNameCString = malloc(endIndex + 1);
-            strncpy(classNameCString, attcontent, endIndex);
-            classNameCString[endIndex] = '\0';
-            free(attcontent);
-            
-            // NSString
-            if (strcmp(classNameCString, "NSString") == 0) {
-                if ([value class] == [NSString class]) {
-                    [self setValue:value forKey:property.name];
-                }
-                else {
-                    [self setValue:[NSString stringWithFormat:@"%@", value] forKey:property.name];
-                }
-            }
-            // NSNumber
-            else if (strcmp(classNameCString, "NSNumber") == 0) {
+        if (property.type == VIArray) {
+            if (cls == nil) {
                 [self setValue:value forKey:property.name];
             }
-            // NSDate
-            else if (strcmp(classNameCString, "NSDate") == 0) {
-                ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
-                [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
-            }
-            // NSDictionary
-            else if (strcmp(classNameCString, "NSDictionary") == 0) {
-                // stop inject children propertis and reconstruct NSDictionary
-                @try {
-                    [self setValue:[NSDictionary dictionaryWithDictionary:value] forKey:property.name];
-                }
-                @catch (NSException *exception) {
-                    [self setValue:value forKey:property.name];
-                }
-            }
-            // NSArray
-            else if (strcmp(classNameCString, "NSArray") == 0) {
-                if (cls == nil) {
-                    [self setValue:value forKey:property.name];
-                }
-                else {
-#if __has_feature(objc_arc)
-                    NSMutableArray *result = [NSMutableArray new];
-#else
-                    NSMutableArray *result = [[NSMutableArray new] autorelease];
-#endif
-                    // list all item in NSArray
-                    for (id item in value) {
-#if __has_feature(objc_arc)
-                        id model = [cls new];
-#else
-                        id model = [[cls new] autorelease];
-#endif
-                        [model injectCoreFromObject:item arrayClass:nil];
-                        // put model into result array
-                        if (model == nil || [model isKindOfClass:[NSNull class]]) {
-                            [result addObject:[NSNull null]];
-                        }
-                        else {
-                            [result addObject:model];
-                        }
-                    }
-                    // inject value to property of custom class
-                    [self setValue:result forKey:property.name];
-                }
-            }
-            // custom class
             else {
-                Class cl = NSClassFromString([NSString stringWithCString:classNameCString encoding:NSUTF8StringEncoding]);
 #if __has_feature(objc_arc)
-                id model = [cl new];
+                NSMutableArray *result = [NSMutableArray new];
 #else
-                id model = [[cl new] autorelease];
+                NSMutableArray *result = [[NSMutableArray new] autorelease];
 #endif
-                [model injectCoreFromObject:value arrayClass:nil];
-                [self setValue:model forKey:property.name];
+                // list all item in NSArray
+                for (id item in value) {
+#if __has_feature(objc_arc)
+                    id model = [cls new];
+#else
+                    id model = [[cls new] autorelease];
+#endif
+                    [model injectCoreFromObject:item arrayClass:nil];
+                    // put model into result array
+                    if (model == nil || [model isKindOfClass:[NSNull class]]) {
+                        [result addObject:[NSNull null]];
+                    }
+                    else {
+                        [result addObject:model];
+                    }
+                }
+                // inject value to property of custom class
+                [self setValue:[NSArray arrayWithArray:result] forKey:property.name];
             }
-            free(classNameCString);
+        }
+        else if (property.type == VIMutableArray) {
+            if (cls == nil) {
+                [self setValue:value forKey:property.name];
+            }
+            else {
+#if __has_feature(objc_arc)
+                NSMutableArray *result = [NSMutableArray new];
+#else
+                NSMutableArray *result = [[NSMutableArray new] autorelease];
+#endif
+                // list all item in NSArray
+                for (id item in value) {
+#if __has_feature(objc_arc)
+                    id model = [cls new];
+#else
+                    id model = [[cls new] autorelease];
+#endif
+                    [model injectCoreFromObject:item arrayClass:nil];
+                    // put model into result array
+                    if (model == nil || [model isKindOfClass:[NSNull class]]) {
+                        [result addObject:[NSNull null]];
+                    }
+                    else {
+                        [result addObject:model];
+                    }
+                }
+                // inject value to property of custom class
+                [self setValue:result forKey:property.name];
+            }
+        }
+        else if (property.type == VIDate) {
+            ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+            [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
+        }
+        else if (property.type == VICustom) {
+            Class cl = NSClassFromString(property.customClassName);
+#if __has_feature(objc_arc)
+            id model = [cl new];
+#else
+            id model = [[cl new] autorelease];
+#endif
+            [model injectCoreFromObject:value arrayClass:nil];
+            [self setValue:model forKey:property.name];
         }
         else {
-            // the type of member is not class
-            [self setValue:value forKey:property.name];
+            switch (property.type) {
+                case VIString:
+                    if ([value class] == [NSString class]) {
+                        [self setValue:value forKey:property.name];
+                    }
+                    else {
+                        [self setValue:[NSString stringWithFormat:@"%@", value] forKey:property.name];
+                    }
+                    break;
+                case VIMutableString:
+                    if ([value class] == [NSMutableString class]) {
+                        [self setValue:value forKey:property.name];
+                    }
+                    else {
+                        [self setValue:[NSMutableString stringWithFormat:@"%@", value] forKey:property.name];
+                    }
+                    break;
+                case VINumber:
+                    [self setValue:value forKey:property.name];
+                    break;
+                case VIDictionary:
+                    // stop inject children propertis and reconstruct NSDictionary
+                    @try {
+                        [self setValue:[NSDictionary dictionaryWithDictionary:value] forKey:property.name];
+                    }
+                    @catch (NSException *exception) {
+                        [self setValue:value forKey:property.name];
+                    }
+                    break;
+                case VIMutableDictionary:
+                    // stop inject children propertis and reconstruct NSDictionary
+                    @try {
+                        [self setValue:[NSMutableDictionary dictionaryWithDictionary:value] forKey:property.name];
+                    }
+                    @catch (NSException *exception) {
+                        [self setValue:value forKey:property.name];
+                    }
+                    break;
+                case VIBaseType:
+                    [self setValue:value forKey:property.name];
+                    break;
+            }
         }
     }
     
@@ -260,89 +372,120 @@ static ValueInjectorUtility *_instance;
         if (value == nil || [value isKindOfClass:[NSNull class]])  //value is null
             [content addObject:[NSNull null]];
         else {
-            const char *start = strstr(property.attributesCString, "T@\"");
-            if (start != 0x00) {
-                char *attcontent;
-                attcontent = malloc(strlen(start) + 1);
-                strcpy(attcontent, start + 3);
-                unsigned long endIndex = strcspn(attcontent, "\"");
-                // get class type name from attributes of property
-                char *classNameCString;
-                classNameCString = malloc(endIndex + 1);
-                strncpy(classNameCString, attcontent, endIndex);
-                classNameCString[endIndex] = '\0';
-                free(attcontent);
-                
-                if (strcmp(classNameCString, "NSString") == 0 ||
-                    strcmp(classNameCString, "NSNumber") == 0) {
-                    [content addObject:value];
-                }
-                else if (strcmp(classNameCString, "NSDictionary") == 0) {
-                    //NSDictionary
-                    @try {
-                        [content addObject:[NSDictionary dictionaryWithDictionary:value]];
+            if (property.type == VIArray) {
+                NSArray *source = value;
+                @try {
+                    if ([source count] == 0) {
+                        //array is empty
+                        [content addObject:value];
                     }
-                    @catch (NSException *exception) {
-#if __has_feature(objc_arc)
-                        [content addObject:[NSDictionary new]];
-#else
-                        [content addObject:[[NSDictionary new] autorelease]];
-#endif
-                    }
-                }
-                else if (strcmp(classNameCString, "NSArray") == 0) {
-                    NSArray *source = value;
-                    @try {
-                        if ([source count] == 0) {
-                            //array is empty
+                    else {
+                        const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
+                        if (strcmp(arrayContent, "NSString") == 0 ||
+                            strcmp(arrayContent, "NSNumber") == 0) {
                             [content addObject:value];
                         }
                         else {
-                            const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
-                            if (strcmp(arrayContent, "NSString") == 0 ||
-                                strcmp(arrayContent, "NSNumber") == 0) {
-                                [content addObject:value];
-                            }
-                            else {
-                                // there are class type in array
+                            // there are class type in array
 #if __has_feature(objc_arc)
-                                NSMutableArray *output = [NSMutableArray new];
+                            NSMutableArray *output = [NSMutableArray new];
 #else
-                                NSMutableArray *output = [[NSMutableArray new] autorelease];
+                            NSMutableArray *output = [[NSMutableArray new] autorelease];
 #endif
-                                for (id item in source) {
+                            for (id item in source) {
 #if __has_feature(objc_arc)
-                                    NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
+                                NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
 #else
-                                    NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
+                                NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
 #endif
-                                    [output addObject:dic];
-                                }
-                                [content addObject:[NSArray arrayWithArray:output]];
+                                [output addObject:dic];
                             }
+                            [content addObject:[NSArray arrayWithArray:output]];
                         }
                     }
-                    @catch (NSException *exception) {
+                }
+                @catch (NSException *exception) {
 #if __has_feature(objc_arc)
-                        [content addObject:[NSArray new]];
+                    [content addObject:[NSArray new]];
 #else
-                        [content addObject:[[NSArray new] autorelease]];
+                    [content addObject:[[NSArray new] autorelease]];
 #endif
+                }
+            }
+            else if (property.type == VIMutableArray) {
+                NSArray *source = value;
+                @try {
+                    if ([source count] == 0) {
+                        //array is empty
+                        [content addObject:value];
+                    }
+                    else {
+                        const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
+                        if (strcmp(arrayContent, "NSString") == 0 ||
+                            strcmp(arrayContent, "NSNumber") == 0) {
+                            [content addObject:value];
+                        }
+                        else {
+                            // there are class type in array
+#if __has_feature(objc_arc)
+                            NSMutableArray *output = [NSMutableArray new];
+#else
+                            NSMutableArray *output = [[NSMutableArray new] autorelease];
+#endif
+                            for (id item in source) {
+#if __has_feature(objc_arc)
+                                NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
+#else
+                                NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
+#endif
+                                [output addObject:dic];
+                            }
+                            [content addObject:output];
+                        }
                     }
                 }
-                else {
-                    // custom class
+                @catch (NSException *exception) {
 #if __has_feature(objc_arc)
-                    NSDictionary *dic = [[NSDictionary alloc] initWithObject:value];
+                    [content addObject:[NSMutableArray new]];
 #else
-                    NSDictionary *dic = [[[NSDictionary alloc] initWithObject:value] autorelease];
+                    [content addObject:[[NSMutableArray new] autorelease]];
 #endif
-                    [content addObject:dic];
                 }
-                free(classNameCString);
+            }
+            else if (property.type == VIDictionary) {
+                @try {
+                    [content addObject:[NSDictionary dictionaryWithDictionary:value]];
+                }
+                @catch (NSException *exception) {
+#if __has_feature(objc_arc)
+                    [content addObject:[NSDictionary new]];
+#else
+                    [content addObject:[[NSDictionary new] autorelease]];
+#endif
+                }
+            }
+            else if (property.type == VIMutableDictionary) {
+                //NSDictionary
+                @try {
+                    [content addObject:[NSMutableDictionary dictionaryWithDictionary:value]];
+                }
+                @catch (NSException *exception) {
+#if __has_feature(objc_arc)
+                    [content addObject:[NSMutableDictionary new]];
+#else
+                    [content addObject:[[NSMutableDictionary new] autorelease]];
+#endif
+                }
+            }
+            else if (property.type == VICustom) {
+#if __has_feature(objc_arc)
+                NSDictionary *dic = [[NSDictionary alloc] initWithObject:value];
+#else
+                NSDictionary *dic = [[[NSDictionary alloc] initWithObject:value] autorelease];
+#endif
+                [content addObject:dic];
             }
             else {
-                //the type of member is not class
                 [content addObject:value];
             }
         }
