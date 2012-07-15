@@ -22,11 +22,17 @@ enum {
     VIDate,
     VIData,
     VIMutableData,
+    VIDecimal,
+    VIDecimalNumber,
     VICustom,
-    VIBaseType
+    VIBool,
+    VIInt,
+    VIUInt,
+    VILong,
+    VIULong,
+    VIDouble
 };
 typedef NSInteger VIType;
-
 
 #pragma mark - PropertyModel
 @interface PropertyModel : NSObject
@@ -63,6 +69,64 @@ static ValueInjectorUtility *_instance;
         return _instance;
     }
 }
+- (VIType)getVIType:(const char *)classNameCString
+{
+    VIType result;
+    // NSString
+    if (strcmp(classNameCString, "NSString") == 0) {
+        result = VIString;
+    }
+    // NSMutableString
+    else if (strcmp(classNameCString, "NSMutableString") == 0) {
+        result = VIMutableString;
+    }
+    // NSNumber
+    else if (strcmp(classNameCString, "NSNumber") == 0) {
+        result = VINumber;
+    }
+    // NSArray
+    else if (strcmp(classNameCString, "NSArray") == 0) {
+        result = VIArray;
+    }
+    // NSMutableArray
+    else if (strcmp(classNameCString, "NSMutableArray") == 0) {
+        result = VIMutableArray;
+    }
+    // NSDictionary
+    else if (strcmp(classNameCString, "NSDictionary") == 0) {
+        result = VIDictionary;
+    }
+    // NSMutableDictionary
+    else if (strcmp(classNameCString, "NSMutableDictionary") == 0) {
+        result = VIMutableDictionary;
+    }
+    // NSDate
+    else if (strcmp(classNameCString, "NSDate") == 0) {
+        result = VIDate;
+    }
+    // NSData
+    else if (strcmp(classNameCString, "NSData") == 0) {
+        result = VIData;
+    }
+    // NSMutableData
+    else if (strcmp(classNameCString, "NSMutableData") == 0) {
+        result = VIMutableData;
+    }
+    // NSDecimal
+    else if (strcmp(classNameCString, "NSDecimal") == 0) {
+        result = VIDecimal;
+    }
+    // NSDecimalNumber
+    else if (strcmp(classNameCString, "NSDecimalNumber") == 0) {
+        result = VIDecimalNumber;
+    }
+    // custom class
+    else {
+        result = VICustom;
+    }
+    
+    return result;
+}
 - (NSArray *)getPropertyList:(Class)cls
 {
 #if __has_feature(objc_arc)
@@ -96,55 +160,40 @@ static ValueInjectorUtility *_instance;
             classNameCString[endIndex] = '\0';
             free(attcontent);
             
-            // NSString
-            if (strcmp(classNameCString, "NSString") == 0) {
-                model.type = VIString;
-            }
-            // NSMutableString
-            else if (strcmp(classNameCString, "NSMutableString") == 0) {
-                model.type = VIMutableString;
-            }
-            // NSNumber
-            else if (strcmp(classNameCString, "NSNumber") == 0) {
-                model.type = VINumber;
-            }
-            // NSArray
-            else if (strcmp(classNameCString, "NSArray") == 0) {
-                model.type = VIArray;
-            }
-            // NSMutableArray
-            else if (strcmp(classNameCString, "NSMutableArray") == 0) {
-                model.type = VIMutableArray;
-            }
-            // NSDictionary
-            else if (strcmp(classNameCString, "NSDictionary") == 0) {
-                model.type = VIDictionary;
-            }
-            // NSMutableDictionary
-            else if (strcmp(classNameCString, "NSMutableDictionary") == 0) {
-                model.type = VIMutableDictionary;
-            }
-            // NSDate
-            else if (strcmp(classNameCString, "NSDate") == 0) {
-                model.type = VIDate;
-            }
-            // NSData
-            else if (strcmp(classNameCString, "NSData") == 0) {
-                model.type = VIData;
-            }
-            // NSMutableData
-            else if (strcmp(classNameCString, "NSMutableData") == 0) {
-                model.type = VIMutableData;
-            }
-            // custom class
-            else {
-                model.type = VICustom;
+            model.type = [self getVIType:classNameCString];
+            if (model.type == VICustom) {
                 model.customClassName = [NSString stringWithUTF8String:classNameCString];
             }
             free(classNameCString);
         }
         else {
-            model.type = VIBaseType;
+            unsigned long endIndex = strcspn(attributes, ",");
+            // get class type name from attributes of property
+            char *attcontent;
+            attcontent = malloc(endIndex + 1);
+            strncpy(attcontent, attributes, endIndex);
+            attcontent[endIndex] = '\0';
+            
+            if (strcmp(attcontent, "Ti") == 0) {
+                model.type = VIInt;
+            }
+            else if (strcmp(attcontent, "TI") == 0) {
+                model.type = VIUInt;
+            }
+            else if (strcmp(attcontent, "Tl") == 0) {
+                model.type = VILong;
+            }
+            else if (strcmp(attcontent, "TL") == 0) {
+                model.type = VIULong;
+            }
+            else if (strcmp(attcontent, "Tc") == 0) {
+                model.type = VIBool;
+            }
+            else if (strcmp(attcontent, "Td") == 0) {
+                model.type = VIDouble;
+            }
+            
+            free(attcontent);
         }
         model.name = [NSString stringWithUTF8String:property_getName(property)];
         [result addObject:model];
@@ -206,9 +255,9 @@ static ValueInjectorUtility *_instance;
             }
             else {
 #if __has_feature(objc_arc)
-                NSMutableArray *result = [NSMutableArray new];
+                NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:[(NSArray *)value count]];
 #else
-                NSMutableArray *result = [[NSMutableArray new] autorelease];
+                NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:[(NSArray *)value count]] autorelease];
 #endif
                 // list all item in NSArray
                 for (id item in value) {
@@ -218,13 +267,7 @@ static ValueInjectorUtility *_instance;
                     id model = [[cls new] autorelease];
 #endif
                     [model injectCoreFromObject:item arrayClass:nil];
-                    // put model into result array
-                    if (model == nil || [model isKindOfClass:[NSNull class]]) {
-                        [result addObject:[NSNull null]];
-                    }
-                    else {
-                        [result addObject:model];
-                    }
+                    [result addObject:model];
                 }
                 // inject value to property of custom class
                 [self setValue:[NSArray arrayWithArray:result] forKey:property.name];
@@ -236,9 +279,9 @@ static ValueInjectorUtility *_instance;
             }
             else {
 #if __has_feature(objc_arc)
-                NSMutableArray *result = [NSMutableArray new];
+                NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:[(NSArray *)value count]];
 #else
-                NSMutableArray *result = [[NSMutableArray new] autorelease];
+                NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:[(NSArray *)value count]] autorelease];
 #endif
                 // list all item in NSArray
                 for (id item in value) {
@@ -248,13 +291,7 @@ static ValueInjectorUtility *_instance;
                     id model = [[cls new] autorelease];
 #endif
                     [model injectCoreFromObject:item arrayClass:nil];
-                    // put model into result array
-                    if (model == nil || [model isKindOfClass:[NSNull class]]) {
-                        [result addObject:[NSNull null]];
-                    }
-                    else {
-                        [result addObject:model];
-                    }
+                    [result addObject:model];
                 }
                 // inject value to property of custom class
                 [self setValue:result forKey:property.name];
@@ -310,9 +347,6 @@ static ValueInjectorUtility *_instance;
                         [self setValue:value forKey:property.name];
                     }
                     break;
-                case VINumber:
-                case VIData:
-                case VIBaseType:
                 default:
                     [self setValue:value forKey:property.name];
                     break;
@@ -351,9 +385,6 @@ static ValueInjectorUtility *_instance;
 // init NSDictionary with custom class
 - (id)initWithObject:(NSObject *)object
 {
-    NSMutableArray *content = [NSMutableArray new];
-    NSMutableArray *key = [NSMutableArray new];
-    
     // get properties of custom class
     NSArray *properties = [[ValueInjectorUtility sharedInstance] getPropertyList:[object class]];
     
@@ -362,119 +393,81 @@ static ValueInjectorUtility *_instance;
         return (id)object;
     }
     
+    NSMutableArray *content = [[NSMutableArray alloc] initWithCapacity:[properties count]];
+    NSMutableArray *key = [[NSMutableArray alloc] initWithCapacity:[properties count]];
+    
     // member is property
-    for (unsigned int index = 0; index < [properties count]; index++) {
-        PropertyModel *property = [properties objectAtIndex:index];
-        
+    for (PropertyModel *property in properties) {
         id value = [object valueForKey:property.name];
         [key addObject:property.name];
         
-        if (value == nil || [value isKindOfClass:[NSNull class]])  //value is null
+        if (value == nil || [value isKindOfClass:[NSNull class]]) {
+            //value is null
             [content addObject:[NSNull null]];
+        }
         else {
             if (property.type == VIArray) {
                 NSArray *source = value;
-                @try {
-                    if ([source count] == 0) {
-                        //array is empty
-                        [content addObject:value];
+                if ([source count] == 0) {
+                    //array is empty
+                    [content addObject:source];
+                }
+                else {
+                    ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+                    const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
+                    VIType type = [viu getVIType:arrayContent];
+                    if (type == VICustom) {
+                        // there are class type in array
+#if __has_feature(objc_arc)
+                        NSMutableArray *output = [NSMutableArray new];
+#else
+                        NSMutableArray *output = [[NSMutableArray new] autorelease];
+#endif
+                        for (id item in source) {
+#if __has_feature(objc_arc)
+                            NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
+#else
+                            NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
+#endif
+                            [output addObject:dic];
+                        }
+                        [content addObject:[NSArray arrayWithArray:output]];
                     }
                     else {
-                        const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
-                        if (strcmp(arrayContent, "NSString") == 0 ||
-                            strcmp(arrayContent, "NSNumber") == 0) {
-                            [content addObject:value];
-                        }
-                        else {
-                            // there are class type in array
-#if __has_feature(objc_arc)
-                            NSMutableArray *output = [NSMutableArray new];
-#else
-                            NSMutableArray *output = [[NSMutableArray new] autorelease];
-#endif
-                            for (id item in source) {
-#if __has_feature(objc_arc)
-                                NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
-#else
-                                NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
-#endif
-                                [output addObject:dic];
-                            }
-                            [content addObject:[NSArray arrayWithArray:output]];
-                        }
+                        [content addObject:value];
                     }
-                }
-                @catch (NSException *exception) {
-#if __has_feature(objc_arc)
-                    [content addObject:[NSArray new]];
-#else
-                    [content addObject:[[NSArray new] autorelease]];
-#endif
                 }
             }
             else if (property.type == VIMutableArray) {
                 NSArray *source = value;
-                @try {
-                    if ([source count] == 0) {
-                        //array is empty
-                        [content addObject:value];
+                if ([source count] == 0) {
+                    //array is empty
+                    [content addObject:source];
+                }
+                else {
+                    ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+                    const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
+                    VIType type = [viu getVIType:arrayContent];
+                    if (type == VICustom) {
+                        // there are class type in array
+#if __has_feature(objc_arc)
+                        NSMutableArray *output = [[NSMutableArray alloc] initWithCapacity:[source count]];
+#else
+                        NSMutableArray *output = [[[NSMutableArray alloc] initWithCapacity:[source count]] autorelease];
+#endif
+                        for (id item in source) {
+#if __has_feature(objc_arc)
+                            NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
+#else
+                            NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
+#endif
+                            [output addObject:dic];
+                        }
+                        [content addObject:output];
                     }
                     else {
-                        const char *arrayContent = class_getName([[source objectAtIndex:0] class]);
-                        if (strcmp(arrayContent, "NSString") == 0 ||
-                            strcmp(arrayContent, "NSNumber") == 0) {
-                            [content addObject:value];
-                        }
-                        else {
-                            // there are class type in array
-#if __has_feature(objc_arc)
-                            NSMutableArray *output = [NSMutableArray new];
-#else
-                            NSMutableArray *output = [[NSMutableArray new] autorelease];
-#endif
-                            for (id item in source) {
-#if __has_feature(objc_arc)
-                                NSDictionary *dic = [[NSDictionary alloc] initWithObject:item];
-#else
-                                NSDictionary *dic = [[[NSDictionary alloc] initWithObject:item] autorelease];
-#endif
-                                [output addObject:dic];
-                            }
-                            [content addObject:output];
-                        }
+                        [content addObject:value];
                     }
-                }
-                @catch (NSException *exception) {
-#if __has_feature(objc_arc)
-                    [content addObject:[NSMutableArray new]];
-#else
-                    [content addObject:[[NSMutableArray new] autorelease]];
-#endif
-                }
-            }
-            else if (property.type == VIDictionary) {
-                @try {
-                    [content addObject:[NSDictionary dictionaryWithDictionary:value]];
-                }
-                @catch (NSException *exception) {
-#if __has_feature(objc_arc)
-                    [content addObject:[NSDictionary new]];
-#else
-                    [content addObject:[[NSDictionary new] autorelease]];
-#endif
-                }
-            }
-            else if (property.type == VIMutableDictionary) {
-                //NSDictionary
-                @try {
-                    [content addObject:[NSMutableDictionary dictionaryWithDictionary:value]];
-                }
-                @catch (NSException *exception) {
-#if __has_feature(objc_arc)
-                    [content addObject:[NSMutableDictionary new]];
-#else
-                    [content addObject:[[NSMutableDictionary new] autorelease]];
-#endif
                 }
             }
             else if (property.type == VICustom) {

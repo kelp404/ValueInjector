@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		21B47E8515B2D8ED00D58366 /* TestClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B47E8415B2D8ED00D58366 /* TestClass.m */; };
 		21B8D5E7157B68A00012F4B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5E6157B68A00012F4B4 /* UIKit.framework */; };
 		21B8D5E9157B68A00012F4B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5E8157B68A00012F4B4 /* Foundation.framework */; };
 		21B8D5EB157B68A00012F4B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B8D5EA157B68A00012F4B4 /* CoreGraphics.framework */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		21B47E8315B2D8ED00D58366 /* TestClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestClass.h; sourceTree = "<group>"; };
+		21B47E8415B2D8ED00D58366 /* TestClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestClass.m; sourceTree = "<group>"; };
 		21B8D5E2157B68A00012F4B4 /* ValueInjectorDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ValueInjectorDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21B8D5E6157B68A00012F4B4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		21B8D5E8157B68A00012F4B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -185,6 +188,8 @@
 				21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */,
 				21FF879C15908753002BD85F /* dotNetTestModel.h */,
 				21FF879D15908753002BD85F /* dotNetTestModel.m */,
+				21B47E8315B2D8ED00D58366 /* TestClass.h */,
+				21B47E8415B2D8ED00D58366 /* TestClass.m */,
 			);
 			name = Models;
 			path = ValueInjectorDemo/Models;
@@ -304,6 +309,7 @@
 				21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */,
 				21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */,
 				21FF879E15908753002BD85F /* dotNetTestModel.m in Sources */,
+				21B47E8515B2D8ED00D58366 /* TestClass.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

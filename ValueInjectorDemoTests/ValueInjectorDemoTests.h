@@ -7,10 +7,12 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <objc/runtime.h>
 #import "JSONKit.h"
 #import "GoogleGeoModel.h"
 #import "ValueInjector.h"
 #import "dotNetTestModel.h"
+#import "TestClass.h"
 
 @interface ValueInjectorDemoTests : SenTestCase
 

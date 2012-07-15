@@ -62,7 +62,7 @@
     }
 }
 
-- (void)testInjectFromdotNewDictionary
+- (void)testInjectFromdotNetDictionary
 {
     NSString *json = @"[{\"Key\":\"Id\",\"Value\":\"114077570386978\"},{\"Key\":\"Title\",\"Value\":\"Kelp-test01\"},{\"Key\":\"CheckNum\",\"Value\":0},{\"Key\":\"Total\",\"Value\":2},{\"Key\":\"SoldAmount\",\"Value\":\"NT$0\"}]";
     NSArray *weak = [json objectFromJSONString];
@@ -79,6 +79,45 @@
         STFail(@"InjectFromdotNewDictionary Error");
     }
     STAssertEqualObjects(model.SoldAmount, @"NT$0", nil);
+}
+
+- (void)testTestClass
+{
+    TestClass *cls = [TestClass new];
+    cls.intData = 10;
+    cls.uintData = 20000;
+    cls.doubleData = 3.1415926;
+    cls.dataData = [@"おはよう" dataUsingEncoding:NSUTF8StringEncoding];
+    cls.decimalNumber = [[NSDecimalNumber alloc] initWithString:@"2000000"];
+    cls.dateData = [NSDate date];
+    
+    NSDictionary *dic = [[NSDictionary alloc] initWithObject:cls];
+    TestClass *cls2 = [TestClass new];
+    [cls2 injectFromObject:dic];
+    
+    int intT = 10;
+    if (intT != cls2.intData) {
+        STFail(@"Error");
+    }
+    uint uintT = 20000;
+    if (uintT != cls2.uintData) {
+        STFail(@"Error");
+    }
+    double doubleT = 3.1415926;
+    if (doubleT != cls2.doubleData) {
+        STFail(@"Error");
+    }
+    NSData *dataT = [@"おはよう" dataUsingEncoding:NSUTF8StringEncoding];
+    if (![dataT isEqualToData:cls2.dataData]) {
+        STFail(@"Error");
+    }
+    NSDecimalNumber *decimal = [[NSDecimalNumber alloc] initWithString:@"2000000"];
+    if (![decimal isEqualToValue:cls2.decimalNumber]) {
+        STFail(@"Error");
+    }
+    if (![cls2.dateData isEqualToDate:cls.dateData]) {
+        STFail(@"Error");
+    }
 }
 
 @end
