@@ -215,7 +215,18 @@ static ValueInjectorUtility *_instance;
 // Inject value from NSDictionary to custom class
 - (id)injectFromObject:(NSObject *)object
 {
-    return [self injectFromObject:object arrayClass:nil];
+    if ([self isKindOfClass:[NSMutableArray class]]) {
+        for (id item in (NSArray *)object) {
+            [(NSMutableArray *)self addObject:item];
+        }
+        return self;
+    }
+    else {
+        if ([object isKindOfClass:[NSDictionary class]]) {
+            return [self injectCoreFromObject:object arrayClass:nil];
+        }
+        return self;
+    }
 }
 - (id)injectFromObject:(NSObject *)object arrayClass:(__unsafe_unretained Class)cls
 {
@@ -226,16 +237,19 @@ static ValueInjectorUtility *_instance;
 #else
             id instance = [[cls new] autorelease];
 #endif
-            [instance injectCoreFromObject:item arrayClass:nil];
+            [instance injectFromObject:item arrayClass:nil];
             [(NSMutableArray *)self addObject:instance];
         }
         return self;
     }
     else {
-        return [self injectCoreFromObject:object arrayClass:cls];
+        if ([object isKindOfClass:[NSDictionary class]]) {
+            return [self injectCoreFromObject:object arrayClass:cls];
+        }
+        return self;
     }
 }
-- (id)injectCoreFromObject:(NSObject *)object arrayClass:(__unsafe_unretained Class)cls
+- (id)injectCoreFromObject:(NSDictionary *)object arrayClass:(__unsafe_unretained Class)cls
 {
     // list properties of custom class and inject value
     NSArray *properties = [[ValueInjectorUtility sharedInstance] getPropertyList:[self class]];
@@ -244,7 +258,7 @@ static ValueInjectorUtility *_instance;
     for (unsigned int index = 0; index < [properties count]; index++) {
         PropertyModel *property = [properties objectAtIndex:index];
         
-        id value = [object valueForKey:property.name];
+        id value = [object objectForKey:property.name];
         
         if (value == nil || [value isKindOfClass:[NSNull class]])
             continue;
@@ -266,7 +280,7 @@ static ValueInjectorUtility *_instance;
 #else
                     id model = [[cls new] autorelease];
 #endif
-                    [model injectCoreFromObject:item arrayClass:nil];
+                    [model injectFromObject:item arrayClass:nil];
                     [result addObject:model];
                 }
                 // inject value to property of custom class
@@ -290,7 +304,7 @@ static ValueInjectorUtility *_instance;
 #else
                     id model = [[cls new] autorelease];
 #endif
-                    [model injectCoreFromObject:item arrayClass:nil];
+                    [model injectFromObject:item arrayClass:nil];
                     [result addObject:model];
                 }
                 // inject value to property of custom class
@@ -298,8 +312,13 @@ static ValueInjectorUtility *_instance;
             }
         }
         else if (property.type == VIDate) {
-            ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
-            [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
+            if ([value isKindOfClass:[NSString class]]) {
+                ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
+                [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
+            }
+            else {
+                [self setValue:value forKey:property.name];
+            }
         }
         else if (property.type == VICustom) {
             Class cl = NSClassFromString(property.customClassName);
@@ -308,7 +327,7 @@ static ValueInjectorUtility *_instance;
 #else
             id model = [[cl new] autorelease];
 #endif
-            [model injectCoreFromObject:value arrayClass:nil];
+            [model injectFromObject:value arrayClass:nil];
             [self setValue:model forKey:property.name];
         }
         else {
