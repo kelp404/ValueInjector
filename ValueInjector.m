@@ -76,6 +76,9 @@ static ValueInjectorUtility *_instance;
     if (strcmp(classNameCString, "NSString") == 0) {
         result = VIString;
     }
+    else if (strcmp(classNameCString, "__NSCFString") == 0) {
+        result = VIString;
+    }
     // NSMutableString
     else if (strcmp(classNameCString, "NSMutableString") == 0) {
         result = VIMutableString;
