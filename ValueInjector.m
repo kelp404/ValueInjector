@@ -317,7 +317,9 @@ static ValueInjectorUtility *_instance;
         else if (property.type == VIDate) {
             if ([value isKindOfClass:[NSString class]]) {
                 ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
-                [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
+                @synchronized (viu.dateFormatter) {
+                    [self setValue:[viu.dateFormatter dateFromString:value] forKey:property.name];
+                }
             }
             else {
                 [self setValue:value forKey:property.name];
@@ -391,7 +393,9 @@ static ValueInjectorUtility *_instance;
         // NSDate
         if (strcmp(attributes, "T@\"NSDate") == 0) {
             ValueInjectorUtility *viu = [ValueInjectorUtility sharedInstance];
-            [self setValue:[viu.dateFormatter dateFromString:[target objectForKey:@"Value"]] forKey:targetName];
+            @synchronized (viu.dateFormatter) {
+                [self setValue:[viu.dateFormatter dateFromString:[target objectForKey:@"Value"]] forKey:targetName];
+            }
         }
         // other classes
         else {
