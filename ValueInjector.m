@@ -65,6 +65,7 @@ static ValueInjectorUtility *_instance;
             _instance.dateFormatter = [[NSDateFormatter new] autorelease];
 #endif
             [_instance.dateFormatter setDateFormat:ValueInjectorTimeFormate];
+            [_instance.dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"US"]];
         }
         return _instance;
     }
