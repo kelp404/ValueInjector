@@ -22,7 +22,6 @@
 		21B8D60F157B68A00012F4B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 21B8D60D157B68A00012F4B4 /* InfoPlist.strings */; };
 		21B8D612157B68A00012F4B4 /* ValueInjectorDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D611157B68A00012F4B4 /* ValueInjectorDemoTests.m */; };
 		21B8D621157B68E30012F4B4 /* ValueInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D620157B68E30012F4B4 /* ValueInjector.m */; };
-		21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D625157B68FC0012F4B4 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */; };
 		21FF879E15908753002BD85F /* dotNetTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 21FF879D15908753002BD85F /* dotNetTestModel.m */; };
 		21FF87A015908CAF002BD85F /* ValueInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8D620157B68E30012F4B4 /* ValueInjector.m */; };
@@ -62,8 +61,6 @@
 		21B8D611157B68A00012F4B4 /* ValueInjectorDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ValueInjectorDemoTests.m; sourceTree = "<group>"; };
 		21B8D61F157B68E30012F4B4 /* ValueInjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueInjector.h; sourceTree = "<group>"; };
 		21B8D620157B68E30012F4B4 /* ValueInjector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValueInjector.m; sourceTree = "<group>"; };
-		21B8D624157B68FC0012F4B4 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
-		21B8D625157B68FC0012F4B4 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		21B8D627157B68FC0012F4B4 /* GoogleGeoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleGeoModel.h; sourceTree = "<group>"; };
 		21B8D628157B68FC0012F4B4 /* GoogleGeoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleGeoModel.m; sourceTree = "<group>"; };
 		21FF879C15908753002BD85F /* dotNetTestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dotNetTestModel.h; sourceTree = "<group>"; };
@@ -99,7 +96,6 @@
 			children = (
 				21B8D61F157B68E30012F4B4 /* ValueInjector.h */,
 				21B8D620157B68E30012F4B4 /* ValueInjector.m */,
-				21B8D623157B68FC0012F4B4 /* JSONKit */,
 				21B8D626157B68FC0012F4B4 /* Models */,
 				21B8D5EC157B68A00012F4B4 /* ValueInjectorDemo */,
 				21B8D60A157B68A00012F4B4 /* ValueInjectorDemoTests */,
@@ -171,16 +167,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		21B8D623157B68FC0012F4B4 /* JSONKit */ = {
-			isa = PBXGroup;
-			children = (
-				21B8D624157B68FC0012F4B4 /* JSONKit.h */,
-				21B8D625157B68FC0012F4B4 /* JSONKit.m */,
-			);
-			name = JSONKit;
-			path = ValueInjectorDemo/JSONKit;
-			sourceTree = "<group>";
-		};
 		21B8D626157B68FC0012F4B4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -241,7 +227,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = ValueInjectorDemo;
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 21B8D5DC157B68A00012F4B4 /* Build configuration list for PBXProject "ValueInjectorDemo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -306,7 +292,6 @@
 				21B8D5F7157B68A00012F4B4 /* ValueInjectorDemoAppDelegate.m in Sources */,
 				21B8D5FD157B68A00012F4B4 /* ValueInjectorDemoViewController.m in Sources */,
 				21B8D621157B68E30012F4B4 /* ValueInjector.m in Sources */,
-				21B8D629157B68FC0012F4B4 /* JSONKit.m in Sources */,
 				21B8D62A157B68FC0012F4B4 /* GoogleGeoModel.m in Sources */,
 				21FF879E15908753002BD85F /* dotNetTestModel.m in Sources */,
 				21B47E8515B2D8ED00D58366 /* TestClass.m in Sources */,
@@ -366,6 +351,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -391,6 +380,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

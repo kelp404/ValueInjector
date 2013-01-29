@@ -26,9 +26,7 @@
 
 - (void)test0InjectFromObject
 {
-    NSString *json = @"{\"name\":\"台北車站\",\"Status\":{\"code\":200,\"request\":\"geocode\"},\"Placemark\":[{\"id\":\"p1\",\"address\":\"100台灣台北市中正區台北火車站\",\"AddressDetails\":{\"Accuracy\":9,\"AddressLine\":[\"台北火車站\"]},\"ExtendedData\":{\"LatLonBox\":{\"north\":25.0492730,\"south\":25.0465750,\"east\":121.5184300,\"west\":121.5157320}},\"Point\":{\"coordinates\":[121.5170810,25.0479240,0]}},{\"id\":\"p2\",\"address\":\"100台灣台北市中正區捷運台北車站\",\"AddressDetails\":{\"Accuracy\":9,\"AddressLine\":[\"捷運台北車站\"]},\"ExtendedData\":{\"LatLonBox\":{\"north\":25.0476040,\"south\":25.0449060,\"east\":121.5188810,\"west\":121.5161830}},\"Point\":{\"coordinates\":[121.5175320,25.0462550,0]}}]}";
-    // parsing json with JSONKit() https://github.com/johnezang/JSONKit
-    NSDictionary *geo = [json objectFromJSONString];
+    NSDictionary *geo = @{@"name":@"台北車站",@"Status":@{@"code":@200,@"request":@"geocode"},@"Placemark":@[@{@"id":@"p1",@"address":@"100台灣台北市中正區台北火車站",@"AddressDetails":@{@"Accuracy":@9,@"AddressLine":@[@"台北火車站"]},@"ExtendedData":@{@"LatLonBox":@{@"north":@25.0492730,@"south":@25.0465750,@"east":@121.5184300,@"west":@121.5157320}},@"Point":@{@"coordinates":@[@121.5170810,@25.0479240,@0]}},@{@"id":@"p2",@"address":@"100台灣台北市中正區捷運台北車站",@"AddressDetails":@{@"Accuracy":@9,@"AddressLine":@[@"捷運台北車站"]},@"ExtendedData":@{@"LatLonBox":@{@"north":@25.0476040,@"south":@25.0449060,@"east":@121.5188810,@"west":@121.5161830}},@"Point":@{@"coordinates":@[@121.5175320,@25.0462550,@0]}}]};
     // instance strong typing
     GoogleGeoModel *model = [GoogleGeoModel new];
     // convert weak typing to strong typing
@@ -45,27 +43,9 @@
     STAssertEqualObjects(([NSString stringWithFormat:@"%@", [placemark1.Point.coordinates objectAtIndex:0]]), @"121.517081", nil);
 }
 
-- (void)test1InitWithObject
-{
-    NSString *json = @"{\"name\":\"台北車站\",\"Status\":{\"code\":200,\"request\":\"geocode\"},\"Placemark\":[{\"id\":\"p1\",\"address\":\"100台灣台北市中正區台北火車站\",\"AddressDetails\":{\"Accuracy\":9,\"AddressLine\":[\"台北火車站\"]},\"ExtendedData\":{\"LatLonBox\":{\"north\":25.0492730,\"south\":25.0465750,\"east\":121.5184300,\"west\":121.5157320}},\"Point\":{\"coordinates\":[121.5170810,25.0479240,0]}},{\"id\":\"p2\",\"address\":\"100台灣台北市中正區捷運台北車站\",\"AddressDetails\":{\"Accuracy\":9,\"AddressLine\":[\"捷運台北車站\"]},\"ExtendedData\":{\"LatLonBox\":{\"north\":25.0476040,\"south\":25.0449060,\"east\":121.5188810,\"west\":121.5161830}},\"Point\":{\"coordinates\":[121.5175320,25.0462550,0]}}]}";
-    NSDictionary *geo = [json objectFromJSONString];
-    GoogleGeoModel *model = [GoogleGeoModel new];
-    // convert weak typing to strong typing
-    [model injectFromObject:geo];
-    
-    // convert strong typing to weak typing
-    NSDictionary *dic = [[NSDictionary alloc] initWithObject:model];
-    NSString *dicString = [NSString stringWithFormat:@"%@", dic];
-    NSString *geoString = [NSString stringWithFormat:@"%@", geo];
-    if (![dicString isEqualToString:geoString]) {
-        STFail(@"dicString should be equal to geoString");
-    }
-}
-
 - (void)test2InjectFromdotNetDictionary
 {
-    NSString *json = @"[{\"Key\":\"Id\",\"Value\":\"114077570386978\"},{\"Key\":\"Title\",\"Value\":\"Kelp-test01\"},{\"Key\":\"CheckNum\",\"Value\":0},{\"Key\":\"Total\",\"Value\":2},{\"Key\":\"SoldAmount\",\"Value\":\"NT$0\"}]";
-    NSArray *weak = [json objectFromJSONString];
+    NSArray *weak = @[@{@"Key": @"Id", @"Value": @"114077570386978"}, @{@"Key":@"Title",@"Value":@"Kelp-test01"},@{@"Key":@"CheckNum",@"Value":@0},@{@"Key":@"Total",@"Value":@2},@{@"Key":@"SoldAmount",@"Value":@"NT$0"}];
     dotNetTestModel *model = [dotNetTestModel new];
     // convert weak typing to strong typing
     [model injectFromdotNetDictionary:weak];
